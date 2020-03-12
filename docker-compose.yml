@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  parity:
+    # TODO: update to image that contains Uniswap v2
+    image: "keydonix/parity-instantseal"
+    ports:
+      - target: "8545"
+        published: "1235"
+        protocol: "tcp"
+        mode: "host"
+
+  geth:
+    # TODO: update to image that contains Uniswap v2
+    image: "keydonix/geth-clique"
+    ports:
+      - target: "8545"
+        published: "1236"
+        protocol: "tcp"
+        mode: "host"
+    environment:
+      GETH_VERBOSITY: "3"
+
+  nethermind:
+    # TODO: update to image that contains Uniswap v2
+    image: "keydonix/nethermind-spaceneth"
+    ports:
+      - target: "8545"
+        published: "1237"
+        protocol: "tcp"
+        mode: "host"

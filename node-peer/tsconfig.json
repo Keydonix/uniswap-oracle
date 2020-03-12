@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"sourceRoot": "source",
+		"outDir": "output",
+		"resolveJsonModule": true,
+
+		"module": "CommonJS",
+		"target": "ESNext",
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"inlineSources": true,
+		"declaration": true,
+		"noEmit": false,
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+	},
+	"include": [
+		"source/**/*.ts"
+	],
+}

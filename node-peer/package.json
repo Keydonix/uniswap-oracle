@@ -1,0 +1,37 @@
+{
+	"name": "@keydonix/uniswap-oracle-node-dependencies",
+	"description": "Peer dependency for using @keydonix/uniswap-oracle in NodeJS",
+	"version": "1.0.0",
+	"license": "Unlicense",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:Keydonix/uniswap-oracle.git"
+	},
+	"main": "output/index.js",
+	"dependencies": {
+		"@peculiar/webcrypto": "1.0.21",
+		"@zoltu/ethereum-abi-encoder": "3.2.2",
+		"@zoltu/ethereum-crypto": "2.1.1",
+		"@zoltu/ethereum-fetch-json-rpc": "11.0.4",
+		"@zoltu/ethereum-types": "8.3.2",
+		"node-fetch": "2.6.0"
+	},
+	"peerDependencies": {
+		"@keydonix/uniswap-oracle": ">=1.0.0"
+	},
+	"devDependencies": {
+		"@keydonix/uniswap-oracle": "file:../library",
+		"@types/node": "13.9.0",
+		"@types/node-fetch": "2.5.5",
+		"ts-node": "8.6.2",
+		"typescript": "3.8.3"
+	},
+	"files": [
+		"source",
+		"output"
+	],
+	"scripts": {
+		"build": "tsc",
+		"watch": "tsc --watch"
+	}
+}
