@@ -6,6 +6,9 @@ import { generateContractInterfaces } from '@zoltu/solidity-typescript-generator
 const outputFileNamePrefix = 'uniswap-oracle'
 const filenamesOrSources = [
 	'UniswapOracle.sol',
+	'SafeMath.sol',
+	'IUniswapV2Factory.sol',
+	'IUniswapV2Pair.sol',
 ]
 const destinationRootPath = path.join(__dirname, '..', 'source', 'generated')
 
