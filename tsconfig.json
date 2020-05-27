@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"module": "CommonJS",
-		"target": "ESNext",
+		"module": "ES2015",
+		"target": "ES2020",
 		"moduleResolution": "node",
 		"sourceMap": true,
 		"inlineSources": true,
@@ -12,8 +12,6 @@
 		"noUnusedParameters": true,
 		"noImplicitReturns": true,
 		"noFallthroughCasesInSwitch": true,
-	},
-	"include": [
-		"**/*.ts"
-	],
+		"plugins": [ { "transform": "@zoltu/typescript-transformer-append-js-extension/output/index.js", "after": true, } ],
+	}
 }

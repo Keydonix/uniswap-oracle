@@ -1,0 +1,27 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "compile demo contracts",
+			"type": "node",
+			"request": "launch",
+			"skipFiles": [ "<node_internals>/**" ],
+			"cwd": "${workspaceFolder}/demo/scripts",
+			"runtimeArgs": [ "-r", "ts-node/register", ],
+			"args": [ "${workspaceFolder}/demo/scripts/compile-contracts.ts", ],
+			"env": { "TS_NODE_PROJECT": "${workspaceFolder}/demo/scripts/tsconfig.json", },
+			"outputCapture": "std",
+		},
+		{
+			"name": "run demo",
+			"type": "node",
+			"request": "launch",
+			"skipFiles": [ "<node_internals>/**" ],
+			"cwd": "${workspaceFolder}/demo",
+			"runtimeArgs": [ "-r", "ts-node/register", ],
+			"args": [ "${workspaceFolder}/demo/source/index.ts", ],
+			"env": { "TS_NODE_PROJECT": "${workspaceFolder}/demo/tsconfig.json", },
+			"outputCapture": "std",
+		}
+	]
+}

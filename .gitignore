@@ -1,3 +1,4 @@
 node_modules/
 /library/source/generated/**/*
 output*/
+generated/

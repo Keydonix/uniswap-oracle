@@ -6,29 +6,27 @@ TODO
 
 ## Developing
 ### Building
-#### Library
+#### Contracts
 ```
-cd library
-npm install # one time
-
-npm run build # compiles contracts and then compiles typescript
-# or
-npm run compile-contracts
-npm run watch
+cd contracts
 ```
-#### node-peer
+#### SDK
 ```
-cd node-peer
+cd sdk
 npm install # one time
 
 npm run build
-# or
-npm run watch
+```
+#### Demo
+```
+cd demo
+npm install # one time
+
+npm run build-contracts # compiles contracts
 ```
 
-### Test
+### Running
 ```
-cd tests
-npm install # one time
-npm test # make sure you are watching the other projects so tests see changes!
+cd demo
+npm run demo
 ```

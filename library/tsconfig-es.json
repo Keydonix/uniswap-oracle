@@ -1,9 +1,0 @@
-{
-	"extends": "./tsconfig.json",
-	"compilerOptions": {
-		"module": "ES2015",
-		"outDir": "output-es",
-		"noEmit": false,
-		"plugins": [ { "transform": "@zoltu/typescript-transformer-append-js-extension", "after": true } ],
-	},
-}

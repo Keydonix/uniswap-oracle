@@ -3,9 +3,10 @@ import * as path from 'path'
 import { CompilerOutput, CompilerInput, compile } from 'solc'
 import { generateContractInterfaces } from '@zoltu/solidity-typescript-generator'
 
-const outputFileNamePrefix = 'uniswap-oracle'
-const filenamesOrSources = [
-	'UniswapOracle.sol',
+const outputFileNamePrefix = 'price-emitter'
+const sourceFiles = [
+	{ key: '@Keydonix/UniswapOracle.sol', path: 'node_modules/@keydonix/uniswap-oracle-contracts/source/UniswapOracle.sol' },
+	{ key: 'PriceEmitter.sol', path: 'contracts/PriceEmitter.sol' },
 ]
 const destinationRootPath = path.join(__dirname, '..', 'source', 'generated')
 
@@ -19,15 +20,15 @@ export async function ensureDirectoryExists(absoluteDirectoryPath: string) {
 }
 
 function resolveRelativeContractPath(fileName: string) {
-	return path.join(__dirname, '..', 'contracts', fileName);
+	return path.join(__dirname, '..', fileName);
 }
 
 async function compileContracts(): Promise<[CompilerInput, CompilerOutput]> {
 	let sources: Record<string, { content: string }> = {}
-	for (const filenameOrSource of filenamesOrSources) {
-		const absolutePath = await resolveRelativeContractPath(filenameOrSource)
+	for (const sourceFile of sourceFiles) {
+		const absolutePath = resolveRelativeContractPath(sourceFile.path)
 		const content = await filesystem.readFile(absolutePath, 'utf8')
-		sources[filenameOrSource] = { content }
+		sources[sourceFile.key] = { content }
 	}
 
 	const compilerInput: CompilerInput = {
@@ -54,6 +55,7 @@ async function compileContracts(): Promise<[CompilerInput, CompilerOutput]> {
 		let concatenatedErrors = "";
 
 		for (let error of errors) {
+			if (error.message === 'SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.') continue
 			concatenatedErrors += error.formattedMessage + "\n";
 		}
 
