@@ -38,14 +38,14 @@ async function emitPrice(rpc: FetchJsonRpc, oraclePriceEmitter: OraclePriceEmitt
 	// TODO: get actual values
 	const blockNumber = 0
 
-	const proof = await getProof(ethGetProof, uniswapExchangeAddress, denominationTokenAddress, blockNumber)
-	const wireEncodedProof = {
-		block: hexStringToByteArray(proof.block),
-		accountProofNodesRlp: hexStringToByteArray(proof.accountProofNodesRlp),
-		reserveAndTimestampProofNodesRlp: hexStringToByteArray(proof.reserveAndTimestampProofNodesRlp),
-		priceProofNodesRlp: hexStringToByteArray(proof.priceProofNodesRlp),
+	const proofWireEncoded = await getProof(ethGetProof, uniswapExchangeAddress, denominationTokenAddress, blockNumber)
+	const proof = {
+		block: hexStringToByteArray(proofWireEncoded.block),
+		accountProofNodesRlp: hexStringToByteArray(proofWireEncoded.accountProofNodesRlp),
+		reserveAndTimestampProofNodesRlp: hexStringToByteArray(proofWireEncoded.reserveAndTimestampProofNodesRlp),
+		priceProofNodesRlp: hexStringToByteArray(proofWireEncoded.priceProofNodesRlp),
 	}
-	const events = await oraclePriceEmitter.emitPrice(uniswapExchangeAddress, denominationTokenAddress, 0n, 256n, wireEncodedProof)
+	const events = await oraclePriceEmitter.emitPrice(uniswapExchangeAddress, denominationTokenAddress, 0n, 255n, proof)
 	const priceEvent = events.find(event => event.name === 'Price') as OraclePriceEmitter.Price | undefined
 	if (priceEvent === undefined) throw new Error(`Event not emitted.`)
 	if (priceEvent.parameters.price !== 0n) throw new Error(`Price not as expected.`)

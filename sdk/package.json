@@ -7,7 +7,11 @@
 		"type": "git",
 		"url": "git@github.com:Keydonix/uniswap-oracle.git"
 	},
-	"main": "output/index.js",
+	"main": "output-cjs/index.js",
+	"exports": {
+		"import": "output-es/index.js",
+		"require": "output-cjs/index.js"
+	},
 	"devDependencies": {
 		"@zoltu/typescript-transformer-append-js-extension": "1.0.1",
 		"typescript": "3.9.3",
@@ -15,7 +19,7 @@
 		"ttypescript": "1.5.10"
 	},
 	"scripts": {
-		"build": "npx ttsc --project ./tsconfig.json"
+		"build": "npx ttsc --project ./tsconfig-es.json && npx ttsc --project ./tsconfig-cjs.json"
 	},
 	"files": [
 		"source",
