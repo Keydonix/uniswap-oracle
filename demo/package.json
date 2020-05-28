@@ -5,6 +5,7 @@
 	},
 	"devDependencies": {
 		"@keydonix/uniswap-oracle-contracts": "file:../contracts",
+		"@peculiar/webcrypto": "1.1.1",
 		"@types/node": "14.0.5",
 		"@types/node-fetch": "2.5.7",
 		"@zoltu/solidity-typescript-generator": "4.0.0",

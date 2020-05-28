@@ -2,11 +2,13 @@ import { promises as filesystem } from 'fs'
 import * as path from 'path'
 import { CompilerOutput, CompilerInput, compile } from 'solc'
 import { generateContractInterfaces } from '@zoltu/solidity-typescript-generator'
+import { uniswapCompilerOutput } from './uniswap-compiler-output'
 
 const outputFileNamePrefix = 'price-emitter'
 const sourceFiles = [
 	{ key: '@Keydonix/UniswapOracle.sol', path: 'node_modules/@keydonix/uniswap-oracle-contracts/source/UniswapOracle.sol' },
 	{ key: 'PriceEmitter.sol', path: 'contracts/PriceEmitter.sol' },
+	{ key: 'TestErc20.sol', path: 'contracts/TestErc20.sol' },
 ]
 const destinationRootPath = path.join(__dirname, '..', 'source', 'generated')
 
@@ -81,18 +83,24 @@ async function writeCompilerOutput(output: CompilerOutput) {
 	return await filesystem.writeFile(filePath, fileContents, { encoding: 'utf8', flag: 'w' })
 }
 
-async function writeGeneratedInterface(compilerOutput: CompilerOutput) {
-	const filePath = path.join(destinationRootPath, `${outputFileNamePrefix}.ts`)
+async function writeGeneratedInterface(compilerOutput: CompilerOutput, filename: string) {
+	const filePath = path.join(destinationRootPath, `${filename}.ts`)
 	await ensureDirectoryExists(path.dirname(filePath))
 	const fileContents = await generateContractInterfaces(compilerOutput)
 	await filesystem.writeFile(filePath, fileContents, { encoding: 'utf8', flag: 'w' })
 }
 
+function mergeInUniswap(compilerOutput: CompilerOutput) {
+	;(compilerOutput.contracts as any)['UniswapV2Factory.sol'] = uniswapCompilerOutput.contracts['UniswapV2Factory.sol']
+	;(compilerOutput.contracts as any)['UniswapV2Pair.sol'] = uniswapCompilerOutput.contracts['UniswapV2Pair.sol']
+}
+
 async function main() {
 	const [compilerInput, compilerOutput] = await compileContracts()
+	mergeInUniswap(compilerOutput)
 	await writeCompilerInput(compilerInput)
 	await writeCompilerOutput(compilerOutput)
-	await writeGeneratedInterface(compilerOutput)
+	await writeGeneratedInterface(compilerOutput, outputFileNamePrefix)
 }
 
 main().then(() => {

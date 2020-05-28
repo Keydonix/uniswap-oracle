@@ -19,7 +19,9 @@
 		"ttypescript": "1.5.10"
 	},
 	"scripts": {
-		"build": "npx ttsc --project ./tsconfig-es.json && npx ttsc --project ./tsconfig-cjs.json"
+		"build": "npx ttsc --project ./tsconfig-es.json && npx ttsc --project ./tsconfig-cjs.json",
+		"watch-es": "npx ttsc --project ./tsconfig-es.json --watch",
+		"watch-cjs": "npx ttsc --project ./tsconfig-cjs.json --watch"
 	},
 	"files": [
 		"source",

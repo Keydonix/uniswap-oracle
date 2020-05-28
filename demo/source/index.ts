@@ -1,23 +1,26 @@
 import { getProof, EthGetProofResult, WireEncodedData, WireEncodedBytes32, WireEncodedQuantity } from '@keydonix/uniswap-oracle-sdk'
 import { FetchDependencies, FetchJsonRpc } from '@zoltu/solidity-typescript-generator-fetch-dependencies'
-import fetch from 'node-fetch'
-import { OraclePriceEmitter } from './generated/price-emitter'
+import { PriceEmitter, UniswapV2Factory, TestErc20, UniswapV2Pair } from './generated/price-emitter'
+import { deploy } from './deploy-contract'
+import { createMemoryRpc, SignerFetchRpc } from './rpc-factories'
+import { deployUniswap } from './deploy-uniswap'
+import { Crypto } from '@peculiar/webcrypto'
+;(global as any).crypto = new Crypto()
+
 
 async function main() {
-	const rpc = new FetchJsonRpc('http://localhost:1235', fetch, {})
-	const dependencies = new FetchDependencies(rpc)
+	const gasPrice = 10n**9n
+	const rpc = await createMemoryRpc('http://localhost:1235', gasPrice)
 
-	// TODO: deploy oracle price emitter to deterministic address, two tokens, and uniswap exchange
-	const oraclePriceEmitterAddress = 0n
-	const uniswapExchangeAddress = 0n
-	const denominationTokenAddress = 0n
-	const oraclePriceEmitter = new OraclePriceEmitter(dependencies, oraclePriceEmitterAddress)
+	const { uniswapExchange, priceEmitter, token0 } = await deployAllTheThings(rpc)
 
-	await emitPrice(rpc, oraclePriceEmitter, uniswapExchangeAddress, denominationTokenAddress)
-	await sdkGetPrice(rpc, oraclePriceEmitter, uniswapExchangeAddress, denominationTokenAddress)
+	const denominationTokenAddress = token0.address
+
+	await emitPrice(rpc, priceEmitter, uniswapExchange.address, denominationTokenAddress)
+	await sdkGetPrice(rpc, priceEmitter, uniswapExchange.address, denominationTokenAddress)
 }
 
-async function emitPrice(rpc: FetchJsonRpc, oraclePriceEmitter: OraclePriceEmitter, uniswapExchangeAddress: bigint, denominationTokenAddress: bigint) {
+async function emitPrice(rpc: FetchJsonRpc, priceEmitter: PriceEmitter, uniswapExchangeAddress: bigint, denominationTokenAddress: bigint) {
 	async function ethGetProof(address: WireEncodedData, positions: WireEncodedBytes32[], block: WireEncodedQuantity): Promise<EthGetProofResult> {
 		// TODO: validate input parameters
 		const result = await rpc.getProof(BigInt(address), positions.map(BigInt), BigInt(block))
@@ -45,23 +48,52 @@ async function emitPrice(rpc: FetchJsonRpc, oraclePriceEmitter: OraclePriceEmitt
 		reserveAndTimestampProofNodesRlp: hexStringToByteArray(proofWireEncoded.reserveAndTimestampProofNodesRlp),
 		priceProofNodesRlp: hexStringToByteArray(proofWireEncoded.priceProofNodesRlp),
 	}
-	const events = await oraclePriceEmitter.emitPrice(uniswapExchangeAddress, denominationTokenAddress, 0n, 255n, proof)
-	const priceEvent = events.find(event => event.name === 'Price') as OraclePriceEmitter.Price | undefined
+	const events = await priceEmitter.emitPrice(uniswapExchangeAddress, denominationTokenAddress, 0n, 255n, proof)
+	const priceEvent = events.find(event => event.name === 'Price') as PriceEmitter.Price | undefined
 	if (priceEvent === undefined) throw new Error(`Event not emitted.`)
 	if (priceEvent.parameters.price !== 0n) throw new Error(`Price not as expected.`)
 }
 
-async function sdkGetPrice(rpc: FetchJsonRpc, oraclePriceEmitter: OraclePriceEmitter, uniswapExchangeAddress: bigint, denominationTokenAddress: bigint) {
+async function sdkGetPrice(rpc: FetchJsonRpc, priceEmitter: PriceEmitter, uniswapExchangeAddress: bigint, denominationTokenAddress: bigint) {
 	async function ethGetStorageAt(address: WireEncodedData, position: WireEncodedQuantity, block: WireEncodedQuantity): Promise<WireEncodedBytes32> {
 		// TODO: validate input parameters
 		const result = await rpc.getStorageAt(BigInt(address), BigInt(position), BigInt(block))
 		return result.to0xString()
 	}
 	ethGetStorageAt
-	oraclePriceEmitter
+	priceEmitter
 	uniswapExchangeAddress
 	denominationTokenAddress
 	throw new Error('not implemented')
+}
+
+async function deployAllTheThings(rpc: SignerFetchRpc) {
+	const dependencies = new FetchDependencies(rpc)
+	const uniswapFactoryAddress = await deployUniswap(rpc)
+	const priceEmitterAddress = await deploy(rpc, 'PriceEmitter.sol', 'PriceEmitter')
+	const appleTokenAddress = await deploy(rpc, 'TestErc20.sol', 'TestErc20', ['string', 'string'], ['APPL', 'Apple'])
+	const bananaTokenAddress = await deploy(rpc, 'TestErc20.sol', 'TestErc20', ['string', 'string'], ['BNNA', 'Banana'])
+	const uniswapFactory = new UniswapV2Factory(dependencies, uniswapFactoryAddress)
+	async function getOrCreatePair() {
+		const pairAddress = await uniswapFactory.getPair_(appleTokenAddress, bananaTokenAddress)
+		if (pairAddress !== 0n) return new UniswapV2Pair(dependencies, pairAddress)
+		const events = await uniswapFactory.createPair(appleTokenAddress, bananaTokenAddress)
+		const pairCreatedEvent = events.find(event => event.name === 'PairCreated') as UniswapV2Factory.PairCreated | undefined
+		if (pairCreatedEvent === undefined) throw new Error(`PairCreated event not found in UniswapFactory.createPair(...) transaction.`)
+		return new UniswapV2Pair(dependencies, pairCreatedEvent.parameters.pair)
+	}
+	const uniswapExchange = await getOrCreatePair()
+	const token0 = new TestErc20(dependencies, await uniswapExchange.token0_())
+	const token1 = new TestErc20(dependencies, await uniswapExchange.token1_())
+	const priceEmitter = new PriceEmitter(dependencies, priceEmitterAddress)
+
+	return {
+		uniswapFactory,
+		uniswapExchange,
+		priceEmitter,
+		token0,
+		token1,
+	} as const
 }
 
 function hexStringToByteArray(hex: string) {

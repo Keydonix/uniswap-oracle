@@ -1,0 +1,60 @@
+version: '3.7'
+services:
+  parity:
+    # TODO: update to image that contains Uniswap v2
+    image: 'keydonix/parity-instantseal'
+    environment:
+      FAKETIME_TIMESTAMP_FILE: '/faketime/faketime'
+      FAKETIME_NO_CACHE: '1'
+    ports:
+      - target: '8545'
+        published: '1235'
+        protocol: 'tcp'
+        mode: 'host'
+    volumes:
+      - type: 'volume'
+        source: 'faketime'
+        target: '/faketime'
+
+  geth:
+    # TODO: update to image that contains Uniswap v2
+    image: 'keydonix/geth-clique'
+    ports:
+      - target: '8545'
+        published: '1236'
+        protocol: 'tcp'
+        mode: 'host'
+    environment:
+      GETH_VERBOSITY: '3'
+
+  nethermind:
+    # TODO: update to image that contains Uniswap v2
+    image: 'keydonix/nethermind-spaceneth'
+    environment:
+      FAKETIME_TIMESTAMP_FILE: '/faketime/faketime'
+      FAKETIME_NO_CACHE: '1'
+    ports:
+      - target: '8545'
+        published: '1237'
+        protocol: 'tcp'
+        mode: 'host'
+    volumes:
+      - type: 'volume'
+        source: 'faketime'
+        target: '/faketime'
+
+  faketime:
+    image: 'keydonix/faketime-http'
+    ports:
+      - target: '80'
+        published: '12340'
+        protocol: 'tcp'
+        mode: 'host'
+    volumes:
+      - type: 'volume'
+        source: 'faketime'
+        target: '/faketime'
+
+volumes:
+  faketime:
+    external: false

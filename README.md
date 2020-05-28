@@ -28,5 +28,6 @@ npm run build-contracts # compiles contracts
 ### Running
 ```
 cd demo
+docker-compose up --force-recreate --always-recreate-deps --abort-on-container-exit --remove-orphans --renew-anon-volumes
 npm run demo
 ```

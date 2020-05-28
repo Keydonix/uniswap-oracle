@@ -1,0 +1,68 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "docker-compose",
+			"type": "process",
+			"command": "docker-compose.exe",
+			"args": [
+				"up",
+				"--force-recreate",
+				"--always-recreate-deps",
+				"--abort-on-container-exit",
+				"--remove-orphans",
+				"--renew-anon-volumes"
+			],
+			"options": {
+				"cwd": "demo"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "sdk - watch - es",
+			"type": "npm",
+			"script": "watch-es",
+			"path": "sdk/",
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "npx ttsc --project ./tsconfig-es.json --watch"
+		},
+		{
+			"label": "sdk - watch - cjs",
+			"type": "npm",
+			"script": "watch-cjs",
+			"path": "sdk/",
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "npx ttsc --project ./tsconfig-cjs.json --watch"
+		},
+		{
+			"label": "demo - build contracts",
+			"type": "npm",
+			"script": "build-contracts",
+			"path": "demo/",
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "npx ts-node --project scripts/tsconfig.json scripts/compile-contracts"
+		},
+		{
+			"label": "sdk - watch",
+			"dependsOn": [
+				"sdk - watch - es",
+				"sdk - watch - cjs",
+				"demo - build contracts",
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "all the things",
+			"dependsOn": [
+				"sdk - watch",
+				"docker-compose",
+			],
+			"problemMatcher": []
+		},
+	]
+}

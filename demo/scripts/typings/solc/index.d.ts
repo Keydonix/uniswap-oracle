@@ -1,93 +1,93 @@
 declare module 'solc' {
-	import { Abi, Primitive } from 'ethereum';
+	import { Abi } from 'ethereum';
 
 	interface CompilerInputSourceFile {
-		keccak256?: string;
-		urls: string[];
+		readonly keccak256?: string;
+		readonly urls: string[];
 	}
 	interface CompilerInputSourceCode {
-		keccak256?: string;
-		content: string;
+		readonly keccak256?: string;
+		readonly content: string;
 	}
 	interface CompilerInput {
-		language: "Solidity" | "serpent" | "lll" | "assembly";
-		settings?: any,
-		sources: {
-			[globalName: string]: CompilerInputSourceFile|CompilerInputSourceCode,
+		readonly language: "Solidity" | "serpent" | "lll" | "assembly";
+		readonly settings?: any,
+		readonly sources: {
+			readonly [globalName: string]: CompilerInputSourceFile|CompilerInputSourceCode,
 		};
 	}
 	interface CompilerOutputError {
-		sourceLocation?: {
-			file: string;
-			start: number;
-			end: number;
+		readonly sourceLocation?: {
+			readonly file: string;
+			readonly start: number;
+			readonly end: number;
 		};
-		type: "TypeError" | "InternalCompilerError" | "Exception";
-		component: "general" | "ewasm";
-		severity: "error" | "warning";
-		message: string;
-		formattedMessage?: string;
+		readonly type: "TypeError" | "InternalCompilerError" | "Exception";
+		readonly component: "general" | "ewasm";
+		readonly severity: "error" | "warning";
+		readonly message: string;
+		readonly formattedMessage?: string;
 	}
 	interface CompilerOutputEvmBytecode {
-		object: string;
-		opcodes?: string;
-		sourceMap?: string;
-		linkReferences?: {} | {
-			[globalName: string]: {
-				[name: string]: {start: number, length: number}[];
+		readonly object: string;
+		readonly opcodes?: string;
+		readonly sourceMap?: string;
+		readonly linkReferences?: {} | {
+			readonly [globalName: string]: {
+				readonly [name: string]: {start: number, length: number}[];
 			};
 		};
 	}
 	interface CompilerOutputSources {
-		[globalName: string]: {
-			id: number;
-			ast: any;
-			legacyAST: any;
+		readonly [globalName: string]: {
+			readonly id: number;
+			readonly ast: any;
+			readonly legacyAST: any;
 		},
 	}
 	interface CompilerOutputContract {
-		abi: Abi;
-		metadata?: string;
-		userdoc?: any;
-		devdoc?: any;
-		ir?: string;
-		evm: {
-			assembly?: string;
-			legacyAssembly?: any;
-			bytecode: CompilerOutputEvmBytecode;
-			deployedBytecode?: CompilerOutputEvmBytecode;
-			methodIdentifiers?: {
-				[methodName: string]: string;
+		readonly abi: Abi;
+		readonly metadata?: string;
+		readonly userdoc?: any;
+		readonly devdoc?: any;
+		readonly ir?: string;
+		readonly evm: {
+			readonly assembly?: string;
+			readonly legacyAssembly?: any;
+			readonly bytecode: CompilerOutputEvmBytecode;
+			readonly deployedBytecode?: CompilerOutputEvmBytecode;
+			readonly methodIdentifiers?: {
+				readonly [methodName: string]: string;
 			};
-			gasEstimates?: {
-				creation: {
-					codeDepositCost: string;
-					executionCost: string;
-					totalCost: string;
+			readonly gasEstimates?: {
+				readonly creation: {
+					readonly codeDepositCost: string;
+					readonly executionCost: string;
+					readonly totalCost: string;
 				};
-				external: {
-					[functionSignature: string]: string;
+				readonly external: {
+					readonly [functionSignature: string]: string;
 				};
-				internal: {
-					[functionSignature: string]: string;
+				readonly internal: {
+					readonly [functionSignature: string]: string;
 				};
 			};
 		};
-		ewasm?: {
-			wast: string;
-			wasm: string;
+		readonly ewasm?: {
+			readonly wast: string;
+			readonly wasm: string;
 		}
 	}
 	interface CompilerOutputContractFile {
-		[contractName: string]: CompilerOutputContract
+		readonly [contractName: string]: CompilerOutputContract
 	}
 	interface CompilerOutputContracts {
-		[globalName: string]: CompilerOutputContractFile
+		readonly [globalName: string]: CompilerOutputContractFile
 	}
 	interface CompilerOutput {
-		errors?: CompilerOutputError[];
-		sources?: CompilerOutputSources;
-		contracts: CompilerOutputContracts;
+		readonly errors?: CompilerOutputError[];
+		readonly sources?: CompilerOutputSources;
+		readonly contracts: CompilerOutputContracts;
 	}
 	type ReadCallback = (path: string) => { contents?: string, error?: string};
 	function compile(input: string, readCallback?: ReadCallback): string;
