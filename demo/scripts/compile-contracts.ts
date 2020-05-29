@@ -7,6 +7,11 @@ import { uniswapCompilerOutput } from './uniswap-compiler-output'
 const outputFileNamePrefix = 'price-emitter'
 const sourceFiles = [
 	{ key: '@Keydonix/UniswapOracle.sol', path: 'node_modules/@keydonix/uniswap-oracle-contracts/source/UniswapOracle.sol' },
+	{ key: '@Keydonix/IUniswapV2Pair.sol', path: 'node_modules/@keydonix/uniswap-oracle-contracts/source/IUniswapV2Pair.sol' },
+	{ key: '@Keydonix/BlockVerifier.sol', path: 'node_modules/@keydonix/uniswap-oracle-contracts/source/BlockVerifier.sol' },
+	{ key: '@Keydonix/MerklePatriciaVerifier.sol', path: 'node_modules/@keydonix/uniswap-oracle-contracts/source/MerklePatriciaVerifier.sol' },
+	{ key: '@Keydonix/Rlp.sol', path: 'node_modules/@keydonix/uniswap-oracle-contracts/source/Rlp.sol' },
+	{ key: '@Keydonix/UQ112x112.sol', path: 'node_modules/@keydonix/uniswap-oracle-contracts/source/UQ112x112.sol' },
 	{ key: 'PriceEmitter.sol', path: 'contracts/PriceEmitter.sol' },
 	{ key: 'TestErc20.sol', path: 'contracts/TestErc20.sol' },
 ]
@@ -22,7 +27,7 @@ export async function ensureDirectoryExists(absoluteDirectoryPath: string) {
 }
 
 function resolveRelativeContractPath(fileName: string) {
-	return path.join(__dirname, '..', fileName);
+	return path.join(__dirname, '..', fileName)
 }
 
 async function compileContracts(): Promise<[CompilerInput, CompilerOutput]> {
