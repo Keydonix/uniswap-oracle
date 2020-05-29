@@ -46,18 +46,18 @@ contract UniswapOracle {
 
 	function getPrice(IUniswapV2Pair _uniswapV2Pair, address denominationToken, uint8 minBlocksBack, uint8 maxBlocksBack, ProofData memory proofData) public view returns (uint256 price, uint256 blockNumber) {
 		// exchange = the ExchangeV2Pair. check denomination token (USE create2 check?!) check gas cost
-		bool _demonitationTokenIs0;
+		bool _denominationTokenIs0;
 		if (_uniswapV2Pair.token0() == denominationToken) {
-			_demonitationTokenIs0 = true;
+			_denominationTokenIs0 = true;
 		} else if (_uniswapV2Pair.token1() == denominationToken) {
-			_demonitationTokenIs0 = false;
+			_denominationTokenIs0 = false;
 		} else {
 			revert("denominationToken invalid");
 		}
-		return getPriceRaw(_uniswapV2Pair, _demonitationTokenIs0, minBlocksBack, maxBlocksBack, proofData);
+		return getPriceRaw(_uniswapV2Pair, _denominationTokenIs0, minBlocksBack, maxBlocksBack, proofData);
 	}
 
-	function getPriceRaw(IUniswapV2Pair _uniswapV2Pair, bool _demonitationTokenIs0, uint8 minBlocksBack, uint8 maxBlocksBack, ProofData memory proofData) public view returns (uint256 price, uint256 blockNumber) {
+	function getPriceRaw(IUniswapV2Pair _uniswapV2Pair, bool _denominationTokenIs0, uint8 minBlocksBack, uint8 maxBlocksBack, ProofData memory proofData) public view returns (uint256 price, uint256 blockNumber) {
 		uint256 historicBlockTimestamp;
 		uint256 historicPriceCumulativeLast;
 		{
@@ -66,30 +66,30 @@ contract UniswapOracle {
 			uint112 reserve0;
 			uint112 reserve1;
 			uint256 reserveTimestamp;
-			( , blockNumber, historicPriceCumulativeLast, reserve0, reserve1, reserveTimestamp) = verifyBlockAndExtractReserveData(_uniswapV2Pair, minBlocksBack, maxBlocksBack, _demonitationTokenIs0 ? token0Slot : token1Slot, proofData);
+			( , blockNumber, historicPriceCumulativeLast, reserve0, reserve1, reserveTimestamp) = verifyBlockAndExtractReserveData(_uniswapV2Pair, minBlocksBack, maxBlocksBack, _denominationTokenIs0 ? token0Slot : token1Slot, proofData);
 			uint256 secondsBetweenReserveUpdateAndHistoricBlock = historicBlockTimestamp - reserveTimestamp;
 			// bring old record up-to-date, in case there was no cumulative update in provided historic block itself
 			if (secondsBetweenReserveUpdateAndHistoricBlock > 0) {
-				// TODO: figure out what _demonitationToken means, re: reserve1/reserve0 ratios
+				// TODO: figure out what _denominationTokenIs0 means, re: reserve1/reserve0 ratios
 				historicPriceCumulativeLast += uint(UQ112x112
-					.encode(_demonitationTokenIs0 ? reserve1 : reserve0)
-					.uqdiv(_demonitationTokenIs0 ? reserve0 : reserve1)
+					.encode(_denominationTokenIs0 ? reserve1 : reserve0)
+					.uqdiv(_denominationTokenIs0 ? reserve0 : reserve1)
 					) * secondsBetweenReserveUpdateAndHistoricBlock;
 			}
 		}
 		uint256 secondsBetweenProvidedBlockAndNow = block.timestamp - historicBlockTimestamp;
-		price = (getCurrentPriceCumulativeLast(_uniswapV2Pair, _demonitationTokenIs0) - historicPriceCumulativeLast) / secondsBetweenProvidedBlockAndNow;
+		price = (getCurrentPriceCumulativeLast(_uniswapV2Pair, _denominationTokenIs0) - historicPriceCumulativeLast) / secondsBetweenProvidedBlockAndNow;
 		return (price, blockNumber);
 	}
 
-	function getCurrentPriceCumulativeLast(IUniswapV2Pair _uniswapV2Pair, bool _demonitationTokenIs0) public view returns (uint256 priceCumulativeLast) {
+	function getCurrentPriceCumulativeLast(IUniswapV2Pair _uniswapV2Pair, bool _denominationTokenIs0) public view returns (uint256 priceCumulativeLast) {
 		(uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast) = _uniswapV2Pair.getReserves();
-		priceCumulativeLast = _demonitationTokenIs0 ? _uniswapV2Pair.price0CumulativeLast() : _uniswapV2Pair.price1CumulativeLast();
+		priceCumulativeLast = _denominationTokenIs0 ? _uniswapV2Pair.price0CumulativeLast() : _uniswapV2Pair.price1CumulativeLast();
 		uint256 timeElapsed = block.timestamp - blockTimestampLast;
 		if (timeElapsed > 0) {
 			priceCumulativeLast += uint(UQ112x112
-				.encode(_demonitationTokenIs0 ? reserve1 : reserve0)
-				.uqdiv(_demonitationTokenIs0 ? reserve0 : reserve1)
+				.encode(_denominationTokenIs0 ? reserve1 : reserve0)
+				.uqdiv(_denominationTokenIs0 ? reserve0 : reserve1)
 			) * timeElapsed;
 		}
 	}
