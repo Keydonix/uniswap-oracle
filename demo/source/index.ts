@@ -1,11 +1,11 @@
-import { getProof, EthGetProofResult, WireEncodedData, WireEncodedBytes32, WireEncodedQuantity } from '@keydonix/uniswap-oracle-sdk'
+import { Crypto } from '@peculiar/webcrypto'
+;(global as any).crypto = new Crypto()
+import * as OracleSdk from '@keydonix/uniswap-oracle-sdk'
 import { FetchDependencies, FetchJsonRpc } from '@zoltu/solidity-typescript-generator-fetch-dependencies'
 import { PriceEmitter, UniswapV2Factory, TestErc20, UniswapV2Pair } from './generated/price-emitter'
 import { deploy } from './deploy-contract'
 import { createMemoryRpc, SignerFetchRpc } from './rpc-factories'
 import { deployUniswap } from './deploy-uniswap'
-import { Crypto } from '@peculiar/webcrypto'
-;(global as any).crypto = new Crypto()
 
 
 async function main() {
@@ -21,32 +21,13 @@ async function main() {
 }
 
 async function emitPrice(rpc: FetchJsonRpc, priceEmitter: PriceEmitter, uniswapExchangeAddress: bigint, denominationTokenAddress: bigint) {
-	async function ethGetProof(address: WireEncodedData, positions: WireEncodedBytes32[], block: WireEncodedQuantity): Promise<EthGetProofResult> {
-		// TODO: validate input parameters
-		const result = await rpc.getProof(BigInt(address), positions.map(BigInt), BigInt(block))
-		return {
-			balance: `0x${result.balance.toString(16)}`,
-			codeHash: `0x${result.codeHash.toString(16).padStart(32, '0')}`,
-			nonce: `0x${result.nonce.toString(16)}`,
-			storageHash: `0x${result.storageHash.toString(16).padStart(32, '0')}`,
-			accountProof: result.accountProof.map(accountProof => accountProof.to0xString()),
-			storageProof: result.storageProof.map(storageProof => ({
-				key: `0x${storageProof.key.toString(16).padStart(32, '0')}`,
-				value: `0x${storageProof.value.toString(16)}`,
-				proof: storageProof.proof.map(proof => proof.to0xString())
-			})),
-		}
-	}
-
-	// TODO: get actual values
-	const blockNumber = 0
-
-	const proofWireEncoded = await getProof(ethGetProof, uniswapExchangeAddress, denominationTokenAddress, blockNumber)
+	const blockNumber = await rpc.getBlockNumber() - 10n
+	const proofWireEncoded = await OracleSdk.getProof(rpc.getStorageAt, rpc.getProof, ethGetBlockByNumber.bind(undefined, rpc), uniswapExchangeAddress, denominationTokenAddress, blockNumber)
 	const proof = {
-		block: hexStringToByteArray(proofWireEncoded.block),
-		accountProofNodesRlp: hexStringToByteArray(proofWireEncoded.accountProofNodesRlp),
-		reserveAndTimestampProofNodesRlp: hexStringToByteArray(proofWireEncoded.reserveAndTimestampProofNodesRlp),
-		priceProofNodesRlp: hexStringToByteArray(proofWireEncoded.priceProofNodesRlp),
+		block: proofWireEncoded.block,
+		accountProofNodesRlp: proofWireEncoded.accountProofNodesRlp,
+		reserveAndTimestampProofNodesRlp: proofWireEncoded.reserveAndTimestampProofNodesRlp,
+		priceProofNodesRlp: proofWireEncoded.priceAccumulatorProofNodesRlp,
 	}
 	const events = await priceEmitter.emitPrice(uniswapExchangeAddress, denominationTokenAddress, 0n, 255n, proof)
 	const priceEvent = events.find(event => event.name === 'Price') as PriceEmitter.Price | undefined
@@ -55,12 +36,7 @@ async function emitPrice(rpc: FetchJsonRpc, priceEmitter: PriceEmitter, uniswapE
 }
 
 async function sdkGetPrice(rpc: FetchJsonRpc, priceEmitter: PriceEmitter, uniswapExchangeAddress: bigint, denominationTokenAddress: bigint) {
-	async function ethGetStorageAt(address: WireEncodedData, position: WireEncodedQuantity, block: WireEncodedQuantity): Promise<WireEncodedBytes32> {
-		// TODO: validate input parameters
-		const result = await rpc.getStorageAt(BigInt(address), BigInt(position), BigInt(block))
-		return result.to0xString()
-	}
-	ethGetStorageAt
+	rpc
 	priceEmitter
 	uniswapExchangeAddress
 	denominationTokenAddress
@@ -96,16 +72,18 @@ async function deployAllTheThings(rpc: SignerFetchRpc) {
 	} as const
 }
 
-function hexStringToByteArray(hex: string) {
-	const match = /^(?:0x)?([a-fA-F0-9]*)$/.exec(hex)
-	if (match === null) throw new Error(`Expected a hex string encoded byte array with an optional '0x' prefix but received ${hex}`)
-	const normalized = match[1]
-	if (normalized.length % 2) throw new Error(`Hex string encoded byte array must be an even number of charcaters long.`)
-	const bytes = []
-	for (let i = 0; i < normalized.length; i += 2) {
-		bytes.push(Number.parseInt(`${normalized[i]}${normalized[i + 1]}`, 16))
+async function ethGetBlockByNumber(rpc: FetchJsonRpc, blockNumber: bigint): Promise<OracleSdk.Block | null> {
+	const result = await rpc.getBlockByNumber(false, blockNumber)
+	if (result === null) throw new Error(`Unknown block number ${blockNumber}`)
+	if (result.logsBloom === null) throw new Error(`Block ${blockNumber} was missing 'logsBloom' field.`)
+	if (result.number === null) throw new Error(`Block ${blockNumber} was missing 'number' field.`)
+	return {
+		...result,
+		logsBloom: result.logsBloom!,
+		number: result.number!,
+		timestamp: BigInt(result.timestamp.getTime() / 1000),
+		mixHash: result.mixHash || undefined,
 	}
-	return new Uint8Array(bytes)
 }
 
 main().then(() => {

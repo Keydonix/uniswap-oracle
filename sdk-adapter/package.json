@@ -1,6 +1,6 @@
 {
-	"name": "@keydonix/uniswap-oracle-sdk",
-	"description": "TypeScript/JavaScript SDK for a Uniswap price oracle that uses merkle proofs for calculating volume weight moving average price.",
+	"name": "@keydonix/uniswap-oracle-sdk-adapter",
+	"description": "Adapter for using @keydonix/uniswap-oracle-sdk with legacy providers like raw JSON-RPC, ethers, web3.js, etc.",
 	"version": "1.0.0",
 	"license": "Unlicense",
 	"repository": {
@@ -12,11 +12,15 @@
 		"import": "output-es/index.js",
 		"require": "output-cjs/index.js"
 	},
+	"peerDependencies": {
+		"@keydonix/uniswap-oracle-sdk": "1.x"
+	},
 	"devDependencies": {
+		"@keydonix/uniswap-oracle-sdk": "file:../sdk",
 		"@zoltu/typescript-transformer-append-js-extension": "1.0.1",
-		"typescript": "3.9.3",
-		"ts-node": "8.10.1",
-		"ttypescript": "1.5.10"
+		"ts-node": "8.10.2",
+		"ttypescript": "1.5.10",
+		"typescript": "3.9.3"
 	},
 	"scripts": {
 		"build": "npx ttsc --project ./tsconfig-es.json && npx ttsc --project ./tsconfig-cjs.json",

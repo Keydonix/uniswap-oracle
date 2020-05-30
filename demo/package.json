@@ -15,7 +15,7 @@
 		"typescript": "3.9.3"
 	},
 	"scripts": {
-		"build-contracts": "npx ts-node --project scripts/tsconfig.json scripts/compile-contracts",
+		"build": "npx ts-node --project scripts/tsconfig.json scripts/compile-contracts",
 		"demo": "npx ts-node --project tsconfig.json source/index.ts"
 	}
 }
