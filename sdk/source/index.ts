@@ -40,9 +40,9 @@ export type EthGetProof = (address: bigint, positions: readonly bigint[], block:
 export type EthGetBlockByNumber = (blockNumber: bigint) => Promise<Block | null>
 
 export async function getProof(eth_getStorageAt: EthGetStorageAt, eth_getProof: EthGetProof, eth_getBlockByNumber: EthGetBlockByNumber, exchangeAddress: bigint, denominationToken: bigint, blockNumber: bigint): Promise<Proof> {
-	const token0Address = uint8ArrayToUnsignedInteger(await eth_getStorageAt(exchangeAddress, 4n, 'latest'))
-	const token1Address = uint8ArrayToUnsignedInteger(await eth_getStorageAt(exchangeAddress, 5n, 'latest'))
-	if (denominationToken !== token0Address && denominationToken !== token1Address) throw new Error(`Denomination token ${addressToString(denominationToken)} is not one of the two tokens for the Uniswap exchange at ${exchangeAddress}`)
+	const token0Address = uint8ArrayToUnsignedInteger(await eth_getStorageAt(exchangeAddress, 6n, 'latest'))
+	const token1Address = uint8ArrayToUnsignedInteger(await eth_getStorageAt(exchangeAddress, 7n, 'latest'))
+	if (denominationToken !== token0Address && denominationToken !== token1Address) throw new Error(`Denomination token ${addressToString(denominationToken)} is not one of the two tokens for the Uniswap exchange at ${addressToString(exchangeAddress)}`)
 	const priceAccumulatorSlot = (denominationToken === token0Address) ? 10n : 9n
 	const proof = await eth_getProof(exchangeAddress, [8n, priceAccumulatorSlot], blockNumber)
 	const block = await eth_getBlockByNumber(blockNumber)

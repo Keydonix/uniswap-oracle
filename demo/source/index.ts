@@ -10,7 +10,7 @@ import { deployUniswap } from './deploy-uniswap'
 
 async function main() {
 	const gasPrice = 10n**9n
-	const rpc = await createMemoryRpc('http://localhost:1235', gasPrice)
+	const rpc = await createMemoryRpc('http://localhost:1237', gasPrice)
 
 	const { uniswapExchange, priceEmitter, token0 } = await deployAllTheThings(rpc)
 
@@ -21,14 +21,8 @@ async function main() {
 }
 
 async function emitPrice(rpc: FetchJsonRpc, priceEmitter: PriceEmitter, uniswapExchangeAddress: bigint, denominationTokenAddress: bigint) {
-	const blockNumber = await rpc.getBlockNumber() - 10n
-	const proofWireEncoded = await OracleSdk.getProof(rpc.getStorageAt, rpc.getProof, ethGetBlockByNumber.bind(undefined, rpc), uniswapExchangeAddress, denominationTokenAddress, blockNumber)
-	const proof = {
-		block: proofWireEncoded.block,
-		accountProofNodesRlp: proofWireEncoded.accountProofNodesRlp,
-		reserveAndTimestampProofNodesRlp: proofWireEncoded.reserveAndTimestampProofNodesRlp,
-		priceProofNodesRlp: proofWireEncoded.priceAccumulatorProofNodesRlp,
-	}
+	const blockNumber = await rpc.getBlockNumber()
+	const proof = await OracleSdk.getProof(rpc.getStorageAt, rpc.getProof, ethGetBlockByNumber.bind(undefined, rpc), uniswapExchangeAddress, denominationTokenAddress, blockNumber)
 	const events = await priceEmitter.emitPrice(uniswapExchangeAddress, denominationTokenAddress, 0n, 255n, proof)
 	const priceEvent = events.find(event => event.name === 'Price') as PriceEmitter.Price | undefined
 	if (priceEvent === undefined) throw new Error(`Event not emitted.`)
@@ -79,16 +73,16 @@ async function ethGetBlockByNumber(rpc: FetchJsonRpc, blockNumber: bigint): Prom
 	if (result.number === null) throw new Error(`Block ${blockNumber} was missing 'number' field.`)
 	return {
 		...result,
-		logsBloom: result.logsBloom!,
-		number: result.number!,
+		logsBloom: result.logsBloom,
+		number: result.number,
 		timestamp: BigInt(result.timestamp.getTime() / 1000),
-		mixHash: result.mixHash || undefined,
+		mixHash: result.mixHash !== null ? result.mixHash : undefined,
 	}
 }
 
 main().then(() => {
 	process.exit(0)
 }).catch(error => {
-	console.error(error)
+	console.dir(error, { depth: null })
 	process.exit(1)
 })

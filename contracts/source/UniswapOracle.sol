@@ -18,7 +18,7 @@ contract UniswapOracle {
 		bytes block;
 		bytes accountProofNodesRlp;
 		bytes reserveAndTimestampProofNodesRlp;
-		bytes priceProofNodesRlp;
+		bytes priceAccumulatorProofNodesRlp;
 	}
 
 	function getAccountStorageRoot(address uniswapV2Pair, ProofData memory proofData) public view returns (bytes32 storageRootHash, uint256 blockNumber, uint256 blockTimestamp) {
@@ -37,7 +37,7 @@ contract UniswapOracle {
 		require (blockNumber < block.number - minBlocksBack, "Proof does not cover enough blocks");
 		require (blockNumber > block.number - maxBlocksBack, "Proof covers too many");
 
-		priceCumulativeLast = Rlp.rlpBytesToUint256(MerklePatriciaVerifier.getValueFromProof(storageRootHash, slotHash, proofData.priceProofNodesRlp));
+		priceCumulativeLast = Rlp.rlpBytesToUint256(MerklePatriciaVerifier.getValueFromProof(storageRootHash, slotHash, proofData.priceAccumulatorProofNodesRlp));
 		uint256 reserve0Reserve1TimestampPacked = Rlp.rlpBytesToUint256(MerklePatriciaVerifier.getValueFromProof(storageRootHash, reserveTimestampSlotHash, proofData.reserveAndTimestampProofNodesRlp));
 		reserveTimestamp = reserve0Reserve1TimestampPacked >> (112 + 112);
 		reserve1 = uint112((reserve0Reserve1TimestampPacked >> 112) & (2**112 - 1));

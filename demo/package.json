@@ -1,7 +1,7 @@
 {
 	"dependencies": {
 		"@keydonix/uniswap-oracle-sdk": "file:../sdk",
-		"@zoltu/solidity-typescript-generator-fetch-dependencies": "4.0.0"
+		"@zoltu/solidity-typescript-generator-fetch-dependencies": "4.0.1"
 	},
 	"devDependencies": {
 		"@keydonix/uniswap-oracle-contracts": "file:../contracts",
