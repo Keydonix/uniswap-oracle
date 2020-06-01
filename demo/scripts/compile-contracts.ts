@@ -13,6 +13,7 @@ const sourceFiles = [
 	{ key: '@Keydonix/Rlp.sol', path: 'node_modules/@keydonix/uniswap-oracle-contracts/source/Rlp.sol' },
 	{ key: '@Keydonix/UQ112x112.sol', path: 'node_modules/@keydonix/uniswap-oracle-contracts/source/UQ112x112.sol' },
 	{ key: 'PriceEmitter.sol', path: 'contracts/PriceEmitter.sol' },
+	{ key: 'TestWrappers.sol', path: 'contracts/TestWrappers.sol' },
 	{ key: 'TestErc20.sol', path: 'contracts/TestErc20.sol' },
 ]
 const destinationRootPath = path.join(__dirname, '..', 'source', 'generated')

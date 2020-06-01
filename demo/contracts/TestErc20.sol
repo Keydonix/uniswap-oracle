@@ -17,10 +17,12 @@ contract TestErc20 {
 		selfdestruct(msg.sender);
 	}
 	function mint(uint256 amount) public {
+		totalSupply += amount;
 		balanceOf[msg.sender] += amount;
 	}
 	function burn(uint256 amount) public {
 		require(balanceOf[msg.sender] >= amount);
+		totalSupply -= amount;
 		balanceOf[msg.sender] -= amount;
 	}
 	function transfer(address recipient, uint256 amount) public returns (bool) {
