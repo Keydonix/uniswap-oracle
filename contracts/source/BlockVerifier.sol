@@ -24,13 +24,13 @@ library BlockVerifier {
 				}
 			}
 
-		    // get the length of the data
+			// get the length of the data
 			let rlpLength := mload(rlpBytes)
 			// move pointer forward, ahead of length
 			rlpBytes := add(rlpBytes, 0x20)
 
-		    // we know the length of the block will be between 483 bytes and 709 bytes, which means it will have 2 length bytes after the prefix byte, so we can skip 3 bytes in
-		    // CONSIDER: we could save a trivial amount of gas by compressing most of this into a single add instruction
+			// we know the length of the block will be between 483 bytes and 709 bytes, which means it will have 2 length bytes after the prefix byte, so we can skip 3 bytes in
+			// CONSIDER: we could save a trivial amount of gas by compressing most of this into a single add instruction
 			let parentHashPrefixPointer := add(rlpBytes, 3)
 			let parentHashPointer := add(parentHashPrefixPointer, 1)
 			let uncleHashPrefixPointer := add(parentHashPointer, 32)
