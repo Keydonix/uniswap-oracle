@@ -1,7 +1,7 @@
 pragma solidity 0.6.8;
 
 library BlockVerifier {
-	function extractStateRootAndTimestamp(bytes memory) internal view returns (bytes32 stateRoot, uint256 blockTimestamp, uint256 blockNumber) {
+	function extractStateRootAndTimestamp(bytes memory rlpBytes) internal view returns (bytes32 stateRoot, uint256 blockTimestamp, uint256 blockNumber) {
 		assembly {
 			function revertWithReason(message, length) {
 				mstore(0, 0x08c379a000000000000000000000000000000000000000000000000000000000)
@@ -24,21 +24,13 @@ library BlockVerifier {
 				}
 			}
 
-			// figure out where in the calldata our bytes are living (skip the function signature)
-			let calldataOffset := add(4, calldataload(4))
-			// get the length of the data
-			let rlpLength := calldataload(calldataOffset)
-			// point calldataOffset at the byte array, rather than length of the byte array
-			calldataOffset := add(calldataOffset, 32)
-			// load the byte array from calldata into memory, so we can hash it
-			let rlpBytes := mload(0x40)
-			mstore(0x40, add(rlpBytes, rlpLength))
-			calldatacopy(rlpBytes, calldataOffset, rlpLength)
-			// hash the data
-			let rlpHash := keccak256(rlpBytes, rlpLength)
+		    // get the length of the data
+			let rlpLength := mload(rlpBytes)
+			// move pointer forward, ahead of length
+			rlpBytes := add(rlpBytes, 0x20)
 
-			// we know the length of the block will be between 483 bytes and 709 bytes, which means it will have 2 length bytes after the prefix byte, so we can skip 3 bytes in
-			// CONSIDER: we could save a trivial amount of gas by compressing most of this into a single add instruction
+		    // we know the length of the block will be between 483 bytes and 709 bytes, which means it will have 2 length bytes after the prefix byte, so we can skip 3 bytes in
+		    // CONSIDER: we could save a trivial amount of gas by compressing most of this into a single add instruction
 			let parentHashPrefixPointer := add(rlpBytes, 3)
 			let parentHashPointer := add(parentHashPrefixPointer, 1)
 			let uncleHashPrefixPointer := add(parentHashPointer, 32)
@@ -66,6 +58,7 @@ library BlockVerifier {
 
 			blockNumber := shr(sub(256, mul(blockNumberLength, 8)), mload(blockNumberPointer))
 			let blockHash := blockhash(blockNumber)
+			let rlpHash := keccak256(rlpBytes, rlpLength)
 			if iszero(eq(blockHash, rlpHash)) { revertWithReason("blockHash != rlpHash", 20) }
 
 			stateRoot := mload(stateRootPointer)
