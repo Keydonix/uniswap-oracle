@@ -46,6 +46,9 @@ async function compileContracts(): Promise<[CompilerInput, CompilerOutput]> {
 				enabled: true,
 				runs: 500
 			},
+			debug: {
+				revertStrings: "debug",
+			},
 			outputSelection: {
 				"*": {
 					'*': [ 'abi', 'storageLayout', 'metadata', 'evm.bytecode.object', 'evm.bytecode.sourceMap', 'evm.deployedBytecode.object', 'evm.gasEstimates', 'evm.methodIdentifiers' ]

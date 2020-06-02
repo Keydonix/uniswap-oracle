@@ -23,7 +23,7 @@ library Rlp {
 	/* Iterator */
 
 	function next(Iterator memory self) internal pure returns (Item memory subItem) {
-		require(hasNext(self));
+		require(hasNext(self), "Rlp.sol:Rlp:next:1");
 		uint256 ptr = self._unsafe_nextPtr;
 		uint256 itemLength = _itemLength(ptr);
 		subItem._unsafe_memPtr = ptr;
@@ -33,7 +33,7 @@ library Rlp {
 
 	function next(Iterator memory self, bool strict) internal pure returns (Item memory subItem) {
 		subItem = next(self);
-		require(!strict || _validate(subItem));
+		require(!strict || _validate(subItem), "Rlp.sol:Rlp:next:2");
 	}
 
 	function hasNext(Iterator memory self) internal pure returns (bool) {
@@ -66,9 +66,9 @@ library Rlp {
 		Rlp.Item memory item = toItem(self);
 		if(strict) {
 			uint len = self.length;
-			require(_payloadOffset(item) <= len);
-			require(_itemLength(item._unsafe_memPtr) == len);
-			require(_validate(item));
+			require(_payloadOffset(item) <= len, "Rlp.sol:Rlp:toItem4");
+			require(_itemLength(item._unsafe_memPtr) == len, "Rlp.sol:Rlp:toItem:5");
+			require(_validate(item), "Rlp.sol:Rlp:toItem:6");
 		}
 		return item;
 	}
@@ -147,7 +147,7 @@ library Rlp {
 	/// @param self The Item.
 	/// @return An 'Iterator' over the item.
 	function iterator(Item memory self) internal pure returns (Iterator memory) {
-		require(isList(self));
+		require(isList(self), "Rlp.sol:Rlp:iterator:1");
 		uint ptr = self._unsafe_memPtr + _payloadOffset(self);
 		Iterator memory it;
 		it._unsafe_item = self;
@@ -160,7 +160,7 @@ library Rlp {
 	/// @return The bytes.
 	function toBytes(Item memory self) internal pure returns (bytes memory) {
 		uint256 len = self._unsafe_length;
-		require(len != 0, "cannot rlp encode a 0 length item");
+		require(len != 0, "Rlp.sol:Rlp:toBytes:2");
 		bytes memory bts;
 		bts = new bytes(len);
 		_copyToBytes(self._unsafe_memPtr, bts, len);
@@ -185,7 +185,7 @@ library Rlp {
 	/// @param self The Item.
 	/// @return Array of Items.
 	function toList(Item memory self) internal pure returns (Item[] memory) {
-		require(isList(self));
+		require(isList(self), "Rlp.sol:Rlp:toList:1");
 		uint256 numItems = items(self);
 		Item[] memory list = new Item[](numItems);
 		Rlp.Iterator memory it = iterator(self);
@@ -202,7 +202,7 @@ library Rlp {
 	/// @param self The Item.
 	/// @return The decoded string.
 	function toAscii(Item memory self) internal pure returns (string memory) {
-		require(isData(self));
+		require(isData(self), "Rlp.sol:Rlp:toAscii:1");
 		(uint256 rStartPos, uint256 len) = _decode(self);
 		bytes memory bts = new bytes(len);
 		_copyToBytes(rStartPos, bts, len);
@@ -215,10 +215,10 @@ library Rlp {
 	/// @param self The Item.
 	/// @return The decoded string.
 	function toUint(Item memory self) internal pure returns (uint) {
-		require(isData(self));
+		require(isData(self), "Rlp.sol:Rlp:toUint:1");
 		(uint256 rStartPos, uint256 len) = _decode(self);
-		require(len <= 32);
-		require(len != 0);
+		require(len <= 32, "Rlp.sol:Rlp:toUint:3");
+		require(len != 0, "Rlp.sol:Rlp:toUint:4");
 		uint data;
 		assembly {
 			data := div(mload(rStartPos), exp(256, sub(32, len)))
@@ -231,14 +231,14 @@ library Rlp {
 	/// @param self The Item.
 	/// @return The decoded string.
 	function toBool(Item memory self) internal pure returns (bool) {
-		require(isData(self));
+		require(isData(self), "Rlp.sol:Rlp:toBool:1");
 		(uint256 rStartPos, uint256 len) = _decode(self);
-		require(len == 1);
+		require(len == 1, "Rlp.sol:Rlp:toBool:3");
 		uint temp;
 		assembly {
 			temp := byte(0, mload(rStartPos))
 		}
-		require(temp <= 1);
+		require(temp <= 1, "Rlp.sol:Rlp:toBool:8");
 		return temp == 1 ? true : false;
 	}
 
@@ -247,9 +247,9 @@ library Rlp {
 	/// @param self The Item.
 	/// @return The decoded string.
 	function toByte(Item memory self) internal pure returns (byte) {
-		require(isData(self));
+		require(isData(self), "Rlp.sol:Rlp:toByte:1");
 		(uint256 rStartPos, uint256 len) = _decode(self);
-		require(len == 1);
+		require(len == 1, "Rlp.sol:Rlp:toByte:3");
 		byte temp;
 		assembly {
 			temp := byte(0, mload(rStartPos))
@@ -278,9 +278,9 @@ library Rlp {
 	/// @param self The Item.
 	/// @return The decoded string.
 	function toAddress(Item memory self) internal pure returns (address) {
-		require(isData(self));
+		require(isData(self), "Rlp.sol:Rlp:toAddress:1");
 		(uint256 rStartPos, uint256 len) = _decode(self);
-		require(len == 20);
+		require(len == 20, "Rlp.sol:Rlp:toAddress:3");
 		address data;
 		assembly {
 			data := div(mload(rStartPos), exp(256, 12))
@@ -336,7 +336,7 @@ library Rlp {
 
 	// Get start position and length of the data.
 	function _decode(Item memory self) private pure returns (uint memPtr, uint len) {
-		require(isData(self));
+		require(isData(self), "Rlp.sol:Rlp:_decode:1");
 		uint b0;
 		uint start = self._unsafe_memPtr;
 		assembly {
