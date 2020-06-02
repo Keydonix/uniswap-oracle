@@ -22,7 +22,7 @@ async function main() {
 async function emitPrice(rpc: FetchJsonRpc, priceEmitter: PriceEmitter, uniswapExchangeAddress: bigint, denominationTokenAddress: bigint) {
 	const blockNumber = await rpc.getBlockNumber()
 	const proof = await OracleSdk.getProof(rpc.getStorageAt, rpc.getProof, ethGetBlockByNumber.bind(undefined, rpc), uniswapExchangeAddress, denominationTokenAddress, blockNumber)
-	let maxBlocksBack = blockNumber > 255n ? 255n : blockNumber
+	const maxBlocksBack = blockNumber > 255n ? 255n : blockNumber
 	const events = await priceEmitter.emitPrice(uniswapExchangeAddress, denominationTokenAddress, 0n, maxBlocksBack, proof)
 	const priceEvent = events.find(event => event.name === 'Price') as PriceEmitter.Price | undefined
 	if (priceEvent === undefined) throw new Error(`Event not emitted.`)
