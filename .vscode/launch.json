@@ -22,6 +22,17 @@
 			"args": [ "${workspaceFolder}/demo/source/index.ts", ],
 			"env": { "TS_NODE_PROJECT": "${workspaceFolder}/demo/tsconfig.json", },
 			"outputCapture": "std",
-		}
+		},
+		{
+			"name": "run tests",
+			"type": "node",
+			"request": "launch",
+			"skipFiles": [ "<node_internals>/**" ],
+			"cwd": "${workspaceFolder}/demo",
+			"runtimeArgs": [ "-r", "ts-node/register", ],
+			"args": [ "${workspaceFolder}/demo/source/test.ts", ],
+			"env": { "TS_NODE_PROJECT": "${workspaceFolder}/demo/tsconfig.json", },
+			"outputCapture": "std",
+		},
 	]
 }

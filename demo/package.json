@@ -1,21 +1,24 @@
 {
 	"dependencies": {
 		"@keydonix/uniswap-oracle-sdk": "file:../sdk",
-		"@zoltu/solidity-typescript-generator-fetch-dependencies": "4.0.0"
+		"@zoltu/solidity-typescript-generator-fetch-dependencies": "4.0.1"
 	},
 	"devDependencies": {
 		"@keydonix/uniswap-oracle-contracts": "file:../contracts",
 		"@peculiar/webcrypto": "1.1.1",
+		"@types/jasmine": "3.5.10",
 		"@types/node": "14.0.5",
 		"@types/node-fetch": "2.5.7",
+		"@zoltu/rlp-encoder": "2.0.0",
 		"@zoltu/solidity-typescript-generator": "4.0.0",
+		"jasmine": "3.5.0",
 		"node-fetch": "2.6.0",
 		"solc": "0.6.8",
 		"ts-node": "8.10.1",
 		"typescript": "3.9.3"
 	},
 	"scripts": {
-		"build-contracts": "npx ts-node --project scripts/tsconfig.json scripts/compile-contracts",
+		"build": "npx ts-node --project scripts/tsconfig.json scripts/compile-contracts",
 		"demo": "npx ts-node --project tsconfig.json source/index.ts"
 	}
 }

@@ -39,9 +39,27 @@
 			"detail": "npx ttsc --project ./tsconfig-cjs.json --watch"
 		},
 		{
-			"label": "demo - build contracts",
+			"label": "sdk-adapter - watch - es",
 			"type": "npm",
-			"script": "build-contracts",
+			"script": "watch-es",
+			"path": "sdk-adapter/",
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "npx ttsc --project ./tsconfig-es.json --watch"
+		},
+		{
+			"label": "sdk-adapter - watch - cjs",
+			"type": "npm",
+			"script": "watch-cjs",
+			"path": "sdk-adapter/",
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "npx ttsc --project ./tsconfig-cjs.json --watch"
+		},
+		{
+			"label": "demo - build",
+			"type": "npm",
+			"script": "build",
 			"path": "demo/",
 			"group": "build",
 			"problemMatcher": [],
@@ -52,7 +70,14 @@
 			"dependsOn": [
 				"sdk - watch - es",
 				"sdk - watch - cjs",
-				"demo - build contracts",
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "sdk-adapter - watch",
+			"dependsOn": [
+				"sdk-adapter - watch - es",
+				"sdk-adapter - watch - cjs",
 			],
 			"problemMatcher": []
 		},
@@ -60,6 +85,8 @@
 			"label": "all the things",
 			"dependsOn": [
 				"sdk - watch",
+				"sdk-adapter - watch",
+				"demo - build",
 				"docker-compose",
 			],
 			"problemMatcher": []
