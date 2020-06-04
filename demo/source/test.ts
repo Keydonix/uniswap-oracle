@@ -119,7 +119,7 @@ it('block to storage', async () => {
 	expect(storedData).toEqual(await token0.totalSupply_())
 })
 
-fit('oracle proof rlp encoding', async () => {
+it('oracle proof rlp encoding', async () => {
 	// setup
 	const rpc = await createMnemonicRpc(jsonRpcEndpoint, gasPrice)
 	const rpcSignerAddress = await rpc.addressProvider()
@@ -149,11 +149,6 @@ fit('oracle proof rlp encoding', async () => {
 	const accountTuple = (rlpDecode(accountRlp) as Uint8Array[]).map(uint8ArrayToUnsignedInteger)
 	expect(accountTuple[0]).toEqual(await rpc.getTransactionCount(uniswapExchange.address))
 	expect(accountTuple[1]).toEqual(await rpc.getBalance(uniswapExchange.address))
-
-	const reserves = await uniswapExchange.getReserves_()
-	console.log(reserves._reserve0)
-	console.log(reserves._reserve1)
-	console.log((await rpc.getStorageAt(uniswapExchange.address, 8n, 'latest')).to0xString())
 
 	const reservePath = await keccak256.hash(unsignedIntegerToUint8Array(8n, 32))
 	const reserveRlp = await merklePatriciaVerifierWrapper.getValueFromProof_(accountTuple[2], reservePath, proof.reserveAndTimestampProofNodesRlp)
