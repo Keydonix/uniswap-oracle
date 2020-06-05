@@ -27,11 +27,3 @@ export function unsignedIntegerToUint8Array(value: bigint | number, widthInBytes
 	}
 	return result
 }
-
-export function uint8ArrayToUnsignedInteger(value: Uint8Array) {
-	let result = 0n
-	for (let byte of value) {
-		result = (result << 8n) + BigInt(byte)
-	}
-	return result
-}

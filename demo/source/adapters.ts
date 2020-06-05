@@ -1,7 +1,7 @@
 import * as OracleSdk from '@keydonix/uniswap-oracle-sdk'
 import { FetchJsonRpc } from '@zoltu/solidity-typescript-generator-fetch-dependencies'
 
-export async function ethGetBlockByNumber(rpc: FetchJsonRpc, blockNumber: bigint): Promise<OracleSdk.Block | null> {
+export async function ethGetBlockByNumber(rpc: FetchJsonRpc, blockNumber: bigint | 'latest'): Promise<OracleSdk.Block | null> {
 	const result = await rpc.getBlockByNumber(false, blockNumber)
 	if (result === null) throw new Error(`Unknown block number ${blockNumber}`)
 	if (result.logsBloom === null) throw new Error(`Block ${blockNumber} was missing 'logsBloom' field.`)

@@ -1,7 +1,7 @@
 {
 	"dependencies": {
 		"@keydonix/uniswap-oracle-sdk": "file:../sdk",
-		"@zoltu/solidity-typescript-generator-fetch-dependencies": "4.0.1"
+		"@zoltu/solidity-typescript-generator-fetch-dependencies": "5.0.0"
 	},
 	"devDependencies": {
 		"@keydonix/uniswap-oracle-contracts": "file:../contracts",
@@ -19,6 +19,7 @@
 	},
 	"scripts": {
 		"build": "npx ts-node --project scripts/tsconfig.json scripts/compile-contracts",
-		"demo": "npx ts-node --project tsconfig.json source/index.ts"
+		"demo": "npx ts-node --project tsconfig.json source/demo.ts",
+		"test": "npx ts-node --project tsconfig.json source/test.ts"
 	}
 }

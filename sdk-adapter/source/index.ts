@@ -7,7 +7,7 @@ type Provider = SendAsyncProvider | RequestProvider
 
 export function getBlockByNumberFactory(provider: Provider): OracleSdk.EthGetBlockByNumber {
 	const requestProvider = normalizeProvider(provider)
-	return async (blockNumber: bigint) => {
+	return async (blockNumber: bigint | 'latest') => {
 		const block = await requestProvider.request('eth_getBlockByNumber', [`0x${blockNumber.toString(16)}`])
 		assertPlainObject(block)
 		assertProperty(block, 'parentHash', 'string')
@@ -53,7 +53,7 @@ export function getStorageAtFactory(provider: Provider): OracleSdk.EthGetStorage
 		const encodedBlockTag = block === 'latest' ? 'latest' : bigintToHexQuantity(block)
 		const result = await requestProvider.request('eth_getStorageAt', [encodedAddress, encodedPosition, encodedBlockTag])
 		if (typeof result !== 'string') throw new Error(`Expected eth_getStorageAt to return a string but instead returned a ${typeof result}`)
-		return stringToByteArray(result)
+		return stringToBigint(result)
 	}
 }
 
