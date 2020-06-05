@@ -69,11 +69,13 @@ contract UniswapOracle {
 			( , blockNumber, historicPriceCumulativeLast, reserve0, reserve1, reserveTimestamp) = verifyBlockAndExtractReserveData(uniswapV2Pair, minBlocksBack, maxBlocksBack, denominationTokenIs0 ? token1Slot : token0Slot, proofData);
 			uint256 secondsBetweenReserveUpdateAndHistoricBlock = historicBlockTimestamp - reserveTimestamp;
 			// bring old record up-to-date, in case there was no cumulative update in provided historic block itself
-			// TODO: figure out what denominationTokenIs0 means, re: reserve1/reserve0 ratios
-			historicPriceCumulativeLast += uint(UQ112x112
-				.encode(denominationTokenIs0 ? reserve1 : reserve0)
-				.uqdiv(denominationTokenIs0 ? reserve0 : reserve1)
-				) * secondsBetweenReserveUpdateAndHistoricBlock;
+			if (secondsBetweenReserveUpdateAndHistoricBlock > 0) {
+				// TODO: figure out what denominationTokenIs0 means, re: reserve1/reserve0 ratios
+				historicPriceCumulativeLast += secondsBetweenReserveUpdateAndHistoricBlock * uint(UQ112x112
+					.encode(denominationTokenIs0 ? reserve1 : reserve0)
+					.uqdiv(denominationTokenIs0 ? reserve0 : reserve1)
+				);
+			}
 		}
 		uint256 secondsBetweenProvidedBlockAndNow = block.timestamp - historicBlockTimestamp;
 		price = (getCurrentPriceCumulativeLast(uniswapV2Pair, denominationTokenIs0) - historicPriceCumulativeLast) / secondsBetweenProvidedBlockAndNow;
@@ -84,9 +86,9 @@ contract UniswapOracle {
 		(uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast) = uniswapV2Pair.getReserves();
 		priceCumulativeLast = denominationTokenIs0 ? uniswapV2Pair.price0CumulativeLast() : uniswapV2Pair.price1CumulativeLast();
 		uint256 timeElapsed = block.timestamp - blockTimestampLast;
-		priceCumulativeLast += uint(UQ112x112
+		priceCumulativeLast += timeElapsed * uint(UQ112x112
 			.encode(denominationTokenIs0 ? reserve1 : reserve0)
 			.uqdiv(denominationTokenIs0 ? reserve0 : reserve1)
-		) * timeElapsed;
+		);
 	}
 }
