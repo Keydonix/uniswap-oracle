@@ -274,12 +274,14 @@ it('no trades, sync before/after', async () => {
 })
 
 fit('one trade', async () => {
-	await resetUniswapAndAccount(contracts.uniswapExchange, contracts.token0, contracts.token1, rpcSignerAddress, 1n, 1n)
-	const blockNumber = await rpc.getBlockNumber() // block where liquidity was minted, implicit sync call, price is 1:1 at the end of this block
-	await setPrice(contracts.uniswapExchange, contracts.token0, contracts.token1, 2n, 1n) // one block at 1:1 price, followed by a block with a sync call in it and 2:1 price at end
-	await contracts.uniswapExchange.sync() // block with 2:1 price for full duration and sync included
+	await resetUniswapAndAccount(contracts.uniswapExchange, contracts.token0, contracts.token1, rpcSignerAddress, 5n, 1n)
+	await setPrice(contracts.uniswapExchange, contracts.token0, contracts.token1, 1n, 1n) // First set price to 1:1 and sync. This will take two blocks, and will ensure cumulativeLast is in storage trie
+	const blockNumber = await rpc.getBlockNumber() // Grab the first block after the sync is called, new blocks will be at 1:1 ratio from here
+	await setPrice(contracts.uniswapExchange, contracts.token0, contracts.token1, 2n, 1n) // So far two blocks at 1:1 price (one transfer, one sync), blocks after this will record 2:1 price
+	await contracts.uniswapExchange.sync() // First block with 2:1 price
 
 	const proof = await OracleSdk.getProof(rpc.getStorageAt, rpc.getProof, ethGetBlockByNumber.bind(undefined, rpc), contracts.uniswapExchange.address, contracts.token0.address, blockNumber)
+	// emitPrice below takes another block, so we have another block at 2:1 price. That's 2x 1:1 and 2x 2:1
 	const events = await contracts.priceEmitter.emitPrice(contracts.uniswapExchange.address, contracts.token0.address, 4n, 4n, proof)
 	const contractPrice = (events.find(x => x.name === 'Price') as PriceEmitter.Price).parameters.price
 	const sdkPrice = await OracleSdk.getPrice(rpc.getStorageAt, ethGetBlockByNumber.bind(undefined, rpc), contracts.uniswapExchange.address, contracts.token0.address, blockNumber)
