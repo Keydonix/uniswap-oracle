@@ -66,7 +66,7 @@ contract UniswapOracle {
 			uint112 reserve0;
 			uint112 reserve1;
 			uint256 reserveTimestamp;
-			( , blockNumber, historicPriceCumulativeLast, reserve0, reserve1, reserveTimestamp) = verifyBlockAndExtractReserveData(uniswapV2Pair, minBlocksBack, maxBlocksBack, denominationTokenIs0 ? token1Slot : token0Slot, proofData);
+			(historicBlockTimestamp, blockNumber, historicPriceCumulativeLast, reserve0, reserve1, reserveTimestamp) = verifyBlockAndExtractReserveData(uniswapV2Pair, minBlocksBack, maxBlocksBack, denominationTokenIs0 ? token1Slot : token0Slot, proofData);
 			uint256 secondsBetweenReserveUpdateAndHistoricBlock = historicBlockTimestamp - reserveTimestamp;
 			// bring old record up-to-date, in case there was no cumulative update in provided historic block itself
 			if (secondsBetweenReserveUpdateAndHistoricBlock > 0) {
