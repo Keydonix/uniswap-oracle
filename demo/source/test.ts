@@ -274,8 +274,8 @@ it('no trades, sync before/after', async () => {
 })
 
 fit('one trade', async () => {
-	await resetUniswapAndAccount(contracts.uniswapExchange, contracts.token0, contracts.token1, rpcSignerAddress, 5n, 1n)
-	await setPrice(contracts.uniswapExchange, contracts.token0, contracts.token1, 1n, 1n) // First set price to 1:1 and sync. This will take two blocks, and will ensure cumulativeLast is in storage trie
+	await resetUniswapAndAccount(contracts.uniswapExchange, contracts.token0, contracts.token1, rpcSignerAddress, 1n, 1n)
+	await contracts.uniswapExchange.sync() // First block with 1:1 price starting
 	const blockNumber = await rpc.getBlockNumber() // Grab the first block after the sync is called, new blocks will be at 1:1 ratio from here
 	await setPrice(contracts.uniswapExchange, contracts.token0, contracts.token1, 2n, 1n) // So far two blocks at 1:1 price (one transfer, one sync), blocks after this will record 2:1 price
 	await contracts.uniswapExchange.sync() // First block with 2:1 price
