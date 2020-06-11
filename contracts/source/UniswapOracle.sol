@@ -34,8 +34,8 @@ contract UniswapOracle {
 	(uint256 blockTimestamp, uint256 blockNumber, uint256 priceCumulativeLast, uint112 reserve0, uint112 reserve1, uint256 reserveTimestamp) {
 		bytes32 storageRootHash;
 		(storageRootHash, blockNumber, blockTimestamp) = getAccountStorageRoot(address(uniswapV2Pair), proofData);
-		require (blockNumber < block.number - minBlocksBack, "Proof does not cover enough blocks");
-		require (blockNumber > block.number - maxBlocksBack, "Proof covers too many");
+		require (blockNumber <= block.number - minBlocksBack, "Proof does not span enough blocks");
+		require (blockNumber >= block.number - maxBlocksBack, "Proof spans too many blocks");
 
 		priceCumulativeLast = Rlp.rlpBytesToUint256(MerklePatriciaVerifier.getValueFromProof(storageRootHash, slotHash, proofData.priceAccumulatorProofNodesRlp));
 		uint256 reserve0Reserve1TimestampPacked = Rlp.rlpBytesToUint256(MerklePatriciaVerifier.getValueFromProof(storageRootHash, reserveTimestampSlotHash, proofData.reserveAndTimestampProofNodesRlp));
@@ -70,10 +70,9 @@ contract UniswapOracle {
 			uint256 secondsBetweenReserveUpdateAndHistoricBlock = historicBlockTimestamp - reserveTimestamp;
 			// bring old record up-to-date, in case there was no cumulative update in provided historic block itself
 			if (secondsBetweenReserveUpdateAndHistoricBlock > 0) {
-				// TODO: figure out what denominationTokenIs0 means, re: reserve1/reserve0 ratios
 				historicPriceCumulativeLast += secondsBetweenReserveUpdateAndHistoricBlock * uint(UQ112x112
-					.encode(denominationTokenIs0 ? reserve1 : reserve0)
-					.uqdiv(denominationTokenIs0 ? reserve0 : reserve1)
+					.encode(denominationTokenIs0 ? reserve0 : reserve1)
+					.uqdiv(denominationTokenIs0 ? reserve1 : reserve0)
 				);
 			}
 		}
@@ -84,11 +83,11 @@ contract UniswapOracle {
 
 	function getCurrentPriceCumulativeLast(IUniswapV2Pair uniswapV2Pair, bool denominationTokenIs0) public view returns (uint256 priceCumulativeLast) {
 		(uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast) = uniswapV2Pair.getReserves();
-		priceCumulativeLast = denominationTokenIs0 ? uniswapV2Pair.price0CumulativeLast() : uniswapV2Pair.price1CumulativeLast();
+		priceCumulativeLast = denominationTokenIs0 ? uniswapV2Pair.price1CumulativeLast() : uniswapV2Pair.price0CumulativeLast();
 		uint256 timeElapsed = block.timestamp - blockTimestampLast;
 		priceCumulativeLast += timeElapsed * uint(UQ112x112
-			.encode(denominationTokenIs0 ? reserve1 : reserve0)
-			.uqdiv(denominationTokenIs0 ? reserve0 : reserve1)
+			.encode(denominationTokenIs0 ? reserve0 : reserve1)
+			.uqdiv(denominationTokenIs0 ? reserve1 : reserve0)
 		);
 	}
 }
