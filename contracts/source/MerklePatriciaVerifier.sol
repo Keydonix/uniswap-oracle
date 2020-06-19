@@ -9,6 +9,8 @@ library MerklePatriciaVerifier {
 	 * @param path The path in the trie leading to value.
 	 * @param proofNodesRlp RLP encoded array of proof nodes.
 	 * @return The value proven to exist in the merkle patricia tree whose root is `expectedRoot` at the path `path`
+	 *
+	 * WARNING: Does not currently support validation of unset/0 values!
 	 */
 	function getValueFromProof(bytes32 expectedRoot, bytes32 path, bytes memory proofNodesRlp) internal pure returns (bytes memory) {
 		Rlp.Item memory rlpParentNodes = Rlp.toItem(proofNodesRlp);
