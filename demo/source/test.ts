@@ -273,7 +273,7 @@ it('no trades, sync before/after', async () => {
 	expect(sdkPrice).toEqual(2n**112n)
 })
 
-fit('one trade', async () => {
+it('one trade', async () => {
 	await resetUniswapAndAccount(contracts.uniswapExchange, contracts.token0, contracts.token1, rpcSignerAddress, 1n, 1n)
 	await contracts.uniswapExchange.sync() // First block with 1:1 price starting
 	const blockNumber = await rpc.getBlockNumber() // Grab the first block after the sync is called, new blocks will be at 1:1 ratio from here

@@ -19,7 +19,7 @@
 			"skipFiles": [ "<node_internals>/**" ],
 			"cwd": "${workspaceFolder}/demo",
 			"runtimeArgs": [ "-r", "ts-node/register", ],
-			"args": [ "${workspaceFolder}/demo/source/index.ts", ],
+			"args": [ "${workspaceFolder}/demo/source/demo.ts", ],
 			"env": { "TS_NODE_PROJECT": "${workspaceFolder}/demo/tsconfig.json", },
 			"outputCapture": "std",
 		},
