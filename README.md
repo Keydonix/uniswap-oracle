@@ -8,6 +8,9 @@ Unlike other Uniswap v2 based oracles, this one does not require regular mainten
 [![Discord](https://img.shields.io/discord/516762394547060756?label=Discord&style=plastic)](https://discord.gg/cM9A5v8)
 [![Twitter Follow](https://img.shields.io/twitter/follow/keydonix?style=social)](https://twitter.com/keydonix)
 
+## In the News
+https://medium.com/@epheph/using-uniswap-v2-oracle-with-storage-proofs-3530e699e1d3
+
 ## Usage
 ```
 npm install @keydonix/uniswap-oracle-contracts @keydonix/uniswap-oracle-sdk
