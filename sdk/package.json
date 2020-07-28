@@ -7,10 +7,10 @@
 		"type": "git",
 		"url": "git@github.com:Keydonix/uniswap-oracle.git"
 	},
-	"main": "output-cjs/index.js",
+	"main": "./output-cjs/index.js",
 	"exports": {
-		"import": "output-es/index.js",
-		"require": "output-cjs/index.js"
+		"import": "./output-es/index.js",
+		"require": "./output-cjs/index.js"
 	},
 	"devDependencies": {
 		"@zoltu/typescript-transformer-append-js-extension": "1.0.1",
@@ -21,7 +21,9 @@
 	"scripts": {
 		"build": "npx ttsc --project ./tsconfig-es.json && npx ttsc --project ./tsconfig-cjs.json",
 		"watch-es": "npx ttsc --project ./tsconfig-es.json --watch",
-		"watch-cjs": "npx ttsc --project ./tsconfig-cjs.json --watch"
+		"watch-cjs": "npx ttsc --project ./tsconfig-cjs.json --watch",
+		"prepublishOnly": "npm run build && cd ../demo && npm run build && npm run test && cd ../sdk && node --eval \"require('fs').copyFile('../README.md', 'README.md', error => {if(error) throw error})\"",
+		"postpublish": "node --eval \"require('fs').unlink('README.md', error => {if(error) throw error})\""
 	},
 	"files": [
 		"source",

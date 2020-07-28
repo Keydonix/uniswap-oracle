@@ -11,8 +11,8 @@ contract UniswapOracle {
 	using UQ112x112 for uint224;
 
 	bytes32 public constant reserveTimestampSlotHash = keccak256(abi.encodePacked(uint256(8)));
-	bytes32 constant token0Slot = keccak256(abi.encodePacked(uint256(9)));
-	bytes32 constant token1Slot = keccak256(abi.encodePacked(uint256(10)));
+	bytes32 public constant token0Slot = keccak256(abi.encodePacked(uint256(9)));
+	bytes32 public constant token1Slot = keccak256(abi.encodePacked(uint256(10)));
 
 	struct ProofData {
 		bytes block;
