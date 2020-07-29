@@ -87,7 +87,7 @@ _Depends on Contracts and SDK_
 cd demo
 npm install # one time
 
-npm run build-contracts # compiles contracts
+npm run build # compiles contracts
 ```
 
 ### Running

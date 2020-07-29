@@ -7,6 +7,10 @@
 		"type": "git",
 		"url": "git@github.com:Keydonix/uniswap-oracle.git"
 	},
+	"scripts": {
+		"prepublishOnly": "cd ../demo && npm run build && npm run test && cd ../contracts && node --eval \"require('fs').copyFile('../README.md', 'README.md', error => {if(error) throw error})\"",
+		"postpublish": "node --eval \"require('fs').unlink('README.md', error => {if(error) throw error})\""
+	},
 	"files": [
 		"source"
 	]
