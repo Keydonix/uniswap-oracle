@@ -21,13 +21,13 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "sdk - watch - es",
+			"label": "sdk - watch - esm",
 			"type": "npm",
-			"script": "watch-es",
+			"script": "watch-esm",
 			"path": "sdk/",
 			"group": "build",
 			"problemMatcher": [],
-			"detail": "npx ttsc --project ./tsconfig-es.json --watch"
+			"detail": "npx ttsc --project ./tsconfig-esm.json --watch"
 		},
 		{
 			"label": "sdk - watch - cjs",
@@ -39,13 +39,13 @@
 			"detail": "npx ttsc --project ./tsconfig-cjs.json --watch"
 		},
 		{
-			"label": "sdk-adapter - watch - es",
+			"label": "sdk-adapter - watch - esm",
 			"type": "npm",
-			"script": "watch-es",
+			"script": "watch-esm",
 			"path": "sdk-adapter/",
 			"group": "build",
 			"problemMatcher": [],
-			"detail": "npx ttsc --project ./tsconfig-es.json --watch"
+			"detail": "npx ttsc --project ./tsconfig-esm.json --watch"
 		},
 		{
 			"label": "sdk-adapter - watch - cjs",
@@ -68,7 +68,7 @@
 		{
 			"label": "sdk - watch",
 			"dependsOn": [
-				"sdk - watch - es",
+				"sdk - watch - esm",
 				"sdk - watch - cjs",
 			],
 			"problemMatcher": []
@@ -76,7 +76,7 @@
 		{
 			"label": "sdk-adapter - watch",
 			"dependsOn": [
-				"sdk-adapter - watch - es",
+				"sdk-adapter - watch - esm",
 				"sdk-adapter - watch - cjs",
 			],
 			"problemMatcher": []

@@ -1,7 +1,7 @@
 {
 	"name": "@keydonix/uniswap-oracle-sdk",
 	"description": "TypeScript/JavaScript SDK for a Uniswap price oracle that uses merkle proofs for calculating volume weight moving average price.",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"license": "Unlicense",
 	"repository": {
 		"type": "git",
@@ -9,7 +9,7 @@
 	},
 	"main": "./output-cjs/index.js",
 	"exports": {
-		"import": "./output-es/index.js",
+		"import": "./output-esm/index.js",
 		"require": "./output-cjs/index.js"
 	},
 	"devDependencies": {
@@ -19,15 +19,15 @@
 		"ttypescript": "1.5.10"
 	},
 	"scripts": {
-		"build": "npx ttsc --project ./tsconfig-es.json && npx ttsc --project ./tsconfig-cjs.json",
-		"watch-es": "npx ttsc --project ./tsconfig-es.json --watch",
+		"build": "npx ttsc --project ./tsconfig-esm.json && npx ttsc --project ./tsconfig-cjs.json",
+		"watch-esm": "npx ttsc --project ./tsconfig-esm.json --watch",
 		"watch-cjs": "npx ttsc --project ./tsconfig-cjs.json --watch",
 		"prepublishOnly": "npm run build && cd ../demo && npm run build && npm run test && cd ../sdk && node --eval \"require('fs').copyFile('../README.md', 'README.md', error => {if(error) throw error})\"",
 		"postpublish": "node --eval \"require('fs').unlink('README.md', error => {if(error) throw error})\""
 	},
 	"files": [
 		"source",
-		"output-es",
+		"output-esm",
 		"output-cjs"
 	]
 }
