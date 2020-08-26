@@ -210,7 +210,7 @@ function stringToByteArray(hex: string): Uint8Array {
 }
 
 function bigintToHexAddress(value: bigint): string {
-	return value.toString(16).padStart(40, '0')
+	return `0x${value.toString(16).padStart(40, '0')}`
 }
 
 function bigintToHexQuantity(value: bigint): string {
