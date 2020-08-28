@@ -8,7 +8,7 @@ type Provider = SendAsyncProvider | RequestProvider
 export function getBlockByNumberFactory(provider: Provider): OracleSdk.EthGetBlockByNumber {
 	const requestProvider = normalizeProvider(provider)
 	return async (blockNumber: bigint | 'latest') => {
-		const block = await requestProvider.request('eth_getBlockByNumber', [`0x${blockNumber.toString(16)}`])
+		const block = await requestProvider.request('eth_getBlockByNumber', [`0x${blockNumber.toString(16)}`, false])
 		assertPlainObject(block)
 		assertProperty(block, 'parentHash', 'string')
 		assertProperty(block, 'sha3Uncles', 'string')
@@ -194,7 +194,7 @@ function stringToBigint(hex: string): bigint {
 	const match = /^(?:0x)?([a-fA-F0-9]*)$/.exec(hex)
 	if (match === null) throw new Error(`Expected a hex string encoded number with an optional '0x' prefix but received ${hex}`)
 	const normalized = match[1]
-	return BigInt(normalized)
+	return BigInt(`0x${normalized}`)
 }
 
 function stringToByteArray(hex: string): Uint8Array {

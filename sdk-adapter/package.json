@@ -1,7 +1,7 @@
 {
 	"name": "@keydonix/uniswap-oracle-sdk-adapter",
 	"description": "Adapter for using @keydonix/uniswap-oracle-sdk with legacy providers like raw JSON-RPC, ethers, web3.js, etc.",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"license": "Unlicense",
 	"repository": {
 		"type": "git",
