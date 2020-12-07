@@ -1,7 +1,7 @@
 {
 	"name": "@keydonix/uniswap-oracle-contracts",
 	"description": "Contracts for a Uniswap price oracle that uses merkle proofs for calculating volume weight moving average price.",
-	"version": "1.0.3",
+	"version": "1.0.5",
 	"license": "Unlicense",
 	"repository": {
 		"type": "git",
