@@ -1,14 +1,16 @@
 import * as OracleSdk from '@keydonix/uniswap-oracle-sdk'
 
 type JsonRpcObject = { jsonrpc: '2.0', id: number | string | null, method: string, params?: unknown[] | object }
+type EthersProvider = { send: (method: string, params?: unknown[] | object) => Promise<unknown> }
 type SendAsyncProvider = { sendAsync: (request: JsonRpcObject, callback: (error: unknown, result: unknown) => void) => Promise<unknown> }
 type RequestProvider = { request: (method: string, params?: unknown[] | object) => Promise<unknown> }
-type Provider = SendAsyncProvider | RequestProvider
+type Provider = SendAsyncProvider | RequestProvider | EthersProvider
 
 export function getBlockByNumberFactory(provider: Provider): OracleSdk.EthGetBlockByNumber {
 	const requestProvider = normalizeProvider(provider)
 	return async (blockNumber: bigint | 'latest') => {
-		const block = await requestProvider.request('eth_getBlockByNumber', [`0x${blockNumber.toString(16)}`, false])
+		const stringifiedBlockNumber = typeof blockNumber === 'bigint' ? `0x${blockNumber.toString(16)}` : blockNumber
+		const block = await requestProvider.request('eth_getBlockByNumber', [stringifiedBlockNumber, false])
 		assertPlainObject(block)
 		assertProperty(block, 'parentHash', 'string')
 		assertProperty(block, 'sha3Uncles', 'string')
@@ -91,6 +93,9 @@ export function getProofFactory(provider: Provider): OracleSdk.EthGetProof {
 
 function normalizeProvider(provider: Provider): RequestProvider {
 	if ('request' in provider) return provider
+	else if ('send' in provider) return {
+		request: async (method, params) => provider.send(method, params)
+	}
 	else return {
 		request: async (method: string, params?: unknown[] | object) => {
 			return new Promise((resolve, reject) => {
