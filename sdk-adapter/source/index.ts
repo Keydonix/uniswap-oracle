@@ -92,21 +92,27 @@ export function getProofFactory(provider: Provider): OracleSdk.EthGetProof {
 }
 
 function normalizeProvider(provider: Provider): RequestProvider {
-	if ('request' in provider) return provider
-	else if ('send' in provider) return {
-		request: async (method, params) => provider.send(method, params)
-	}
-	else return {
-		request: async (method: string, params?: unknown[] | object) => {
-			return new Promise((resolve, reject) => {
-				provider.sendAsync({ jsonrpc: '2.0', id: 1, method, params }, (error, response) => {
-					if (error !== null && error !== undefined) return reject(unknownErrorToJsonRpcError(error, { request: { method, params } }))
-					if (!isJsonRpcLike(response)) return reject(new JsonRpcError(-32000, `Received something other than a JSON-RPC response from provider.sendAsync.`, { request: { method, params }, response}))
-					if ('error' in response) return reject(new JsonRpcError(response.error.code, response.error.message, response.error.data))
-					return resolve(response.result)
+	if ('request' in provider) {
+		return provider
+	} else if('sendAsync' in provider) {
+		return {
+			request: async (method: string, params?: unknown[] | object) => {
+				return new Promise((resolve, reject) => {
+					provider.sendAsync({ jsonrpc: '2.0', id: 1, method, params }, (error, response) => {
+						if (error !== null && error !== undefined) return reject(unknownErrorToJsonRpcError(error, { request: { method, params } }))
+						if (!isJsonRpcLike(response)) return reject(new JsonRpcError(-32000, `Received something other than a JSON-RPC response from provider.sendAsync.`, { request: { method, params }, response}))
+						if ('error' in response) return reject(new JsonRpcError(response.error.code, response.error.message, response.error.data))
+						return resolve(response.result)
+					})
 				})
-			})
+			}
 		}
+	} else if ('send' in provider) {
+		return {
+			request: async (method, params) => provider.send(method, params)
+		}
+	} else {
+		throw new Error(`expected an object with a 'request', 'sendAsync' or 'send' method on it but received ${JSON.stringify(provider)}`)
 	}
 }
 
