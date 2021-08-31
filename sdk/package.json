@@ -1,7 +1,7 @@
 {
 	"name": "@keydonix/uniswap-oracle-sdk",
 	"description": "TypeScript/JavaScript SDK for a Uniswap price oracle that uses merkle proofs for calculating volume weight moving average price.",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"license": "Unlicense",
 	"repository": {
 		"type": "git",
