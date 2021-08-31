@@ -3,14 +3,14 @@ import * as OracleSdk from '@keydonix/uniswap-oracle-sdk'
 type JsonRpcObject = { jsonrpc: '2.0', id: number | string | null, method: string, params?: unknown[] | object }
 type EthersProvider = { send: (method: string, params?: unknown[] | object) => Promise<unknown> }
 type SendAsyncProvider = { sendAsync: (request: JsonRpcObject, callback: (error: unknown, result: unknown) => void) => Promise<unknown> }
-type RequestProvider = { request: (method: string, params?: unknown[] | object) => Promise<unknown> }
+type RequestProvider = { request: (payload: { method: string, params?: unknown[] | object }) => Promise<unknown> }
 type Provider = SendAsyncProvider | RequestProvider | EthersProvider
 
 export function getBlockByNumberFactory(provider: Provider): OracleSdk.EthGetBlockByNumber {
 	const requestProvider = normalizeProvider(provider)
 	return async (blockNumber: bigint | 'latest') => {
 		const stringifiedBlockNumber = typeof blockNumber === 'bigint' ? `0x${blockNumber.toString(16)}` : blockNumber
-		const block = await requestProvider.request('eth_getBlockByNumber', [stringifiedBlockNumber, false])
+		const block = await requestProvider.request({ method: 'eth_getBlockByNumber', params: [stringifiedBlockNumber, false] })
 		assertPlainObject(block)
 		assertProperty(block, 'parentHash', 'string')
 		assertProperty(block, 'sha3Uncles', 'string')
@@ -53,7 +53,7 @@ export function getStorageAtFactory(provider: Provider): OracleSdk.EthGetStorage
 		const encodedAddress = bigintToHexAddress(address)
 		const encodedPosition = bigintToHexQuantity(position)
 		const encodedBlockTag = block === 'latest' ? 'latest' : bigintToHexQuantity(block)
-		const result = await requestProvider.request('eth_getStorageAt', [encodedAddress, encodedPosition, encodedBlockTag])
+		const result = await requestProvider.request({ method: 'eth_getStorageAt', params: [encodedAddress, encodedPosition, encodedBlockTag] })
 		if (typeof result !== 'string') throw new Error(`Expected eth_getStorageAt to return a string but instead returned a ${typeof result}`)
 		return stringToBigint(result)
 	}
@@ -65,7 +65,7 @@ export function getProofFactory(provider: Provider): OracleSdk.EthGetProof {
 		const encodedAddress = bigintToHexAddress(address)
 		const encodedPositions = positions.map(bigintToHexQuantity)
 		const encodedBlockTag = bigintToHexQuantity(block)
-		const result = await requestProvider.request('eth_getProof', [encodedAddress, encodedPositions, encodedBlockTag])
+		const result = await requestProvider.request({ method: 'eth_getProof', params: [encodedAddress, encodedPositions, encodedBlockTag] })
 		assertPlainObject(result)
 		assertProperty(result, 'accountProof', 'array')
 		assertProperty(result, 'storageProof', 'array')
@@ -96,7 +96,7 @@ function normalizeProvider(provider: Provider): RequestProvider {
 		return provider
 	} else if('sendAsync' in provider) {
 		return {
-			request: async (method: string, params?: unknown[] | object) => {
+			request: async ({ method, params }) => {
 				return new Promise((resolve, reject) => {
 					provider.sendAsync({ jsonrpc: '2.0', id: 1, method, params }, (error, response) => {
 						if (error !== null && error !== undefined) return reject(unknownErrorToJsonRpcError(error, { request: { method, params } }))
@@ -109,7 +109,7 @@ function normalizeProvider(provider: Provider): RequestProvider {
 		}
 	} else if ('send' in provider) {
 		return {
-			request: async (method, params) => provider.send(method, params)
+			request: async ({ method, params }) => provider.send(method, params)
 		}
 	} else {
 		throw new Error(`expected an object with a 'request', 'sendAsync' or 'send' method on it but received ${JSON.stringify(provider)}`)
