@@ -1,8 +1,8 @@
 pragma solidity 0.6.8;
 pragma experimental ABIEncoderV2;
 
-import { UniswapOracle } from  '@Keydonix/UniswapOracle.sol';
-import { IUniswapV2Pair } from "@Keydonix/IUniswapV2Pair.sol";
+import { UniswapOracle } from  "@keydonix/UniswapOracle.sol";
+import { IUniswapV2Pair } from "@keydonix/IUniswapV2Pair.sol";
 
 contract PriceEmitter is UniswapOracle {
 	event Price(uint256 price);

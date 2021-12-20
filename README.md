@@ -24,8 +24,8 @@ See a fully functional example in `demo/contracts/PriceEmitter.sol` and `demo/so
 pragma solidity 0.6.8;
 pragma experimental ABIEncoderV2;
 
-import { UniswapOracle } from  '@Keydonix/uniswap-oracle-contracts/source/UniswapOracle.sol';
-import { IUniswapV2Pair } from "@Keydonix/uniswap-oracle-contracts/source/IUniswapV2Pair.sol";
+import { UniswapOracle } from  "@keydonix/uniswap-oracle-contracts/source/UniswapOracle.sol";
+import { IUniswapV2Pair } from "@keydonix/uniswap-oracle-contracts/source/IUniswapV2Pair.sol";
 
 contract PriceEmitter is UniswapOracle {
 	event Price(uint256 price);
