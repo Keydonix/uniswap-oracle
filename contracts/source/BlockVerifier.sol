@@ -31,45 +31,31 @@ library BlockVerifier {
 
 			// we know the length of the block will be between 483 bytes and 709 bytes, which means it will have 2 length bytes after the prefix byte, so we can skip 3 bytes in
 			// CONSIDER: we could save a trivial amount of gas by compressing most of this into a single add instruction
+			let parentHashPrefixPointer := add(rlpBytes, 3)
+			let parentHashPointer := add(parentHashPrefixPointer, 1)
+			let uncleHashPrefixPointer := add(parentHashPointer, 32)
+			let uncleHashPointer := add(uncleHashPrefixPointer, 1)
+			let minerAddressPrefixPointer := add(uncleHashPointer, 32)
+			let minerAddressPointer := add(minerAddressPrefixPointer, 1)
+			let stateRootPrefixPointer := add(minerAddressPointer, 20)
+			let stateRootPointer := add(stateRootPrefixPointer, 1)
+			let transactionRootPrefixPointer := add(stateRootPointer, 32)
+			let transactionRootPointer := add(transactionRootPrefixPointer, 1)
+			let receiptsRootPrefixPointer := add(transactionRootPointer, 32)
+			let receiptsRootPointer := add(receiptsRootPrefixPointer, 1)
+			let logsBloomPrefixPointer := add(receiptsRootPointer, 32)
+			let logsBloomPointer := add(logsBloomPrefixPointer, 3)
+			let difficultyPrefixPointer := add(logsBloomPointer, 256)
+			let difficultyPointer, difficultyLength := readDynamic(difficultyPrefixPointer)
+			let blockNumberPrefixPointer := add(difficultyPointer, difficultyLength)
+			let blockNumberPointer, blockNumberLength := readDynamic(blockNumberPrefixPointer)
+			let gasLimitPrefixPointer := add(blockNumberPointer, blockNumberLength)
+			let gasLimitPointer, gasLimitLength := readDynamic(gasLimitPrefixPointer)
+			let gasUsedPrefixPointer := add(gasLimitPointer, gasLimitLength)
+			let gasUsedPointer, gasUsedLength := readDynamic(gasUsedPrefixPointer)
+			let timestampPrefixPointer := add(gasUsedPointer, gasUsedLength)
+			let timestampPointer, timestampLength := readDynamic(timestampPrefixPointer)
 
-			let stateRootPointer
-			{
-				let parentHashPrefixPointer := add(rlpBytes, 3)
-				let parentHashPointer := add(parentHashPrefixPointer, 1)
-				let uncleHashPrefixPointer := add(parentHashPointer, 32)
-				let uncleHashPointer := add(uncleHashPrefixPointer, 1)
-				let minerAddressPrefixPointer := add(uncleHashPointer, 32)
-				let minerAddressPointer := add(minerAddressPrefixPointer, 1)
-				let stateRootPrefixPointer := add(minerAddressPointer, 20)
-				stateRootPointer := add(stateRootPrefixPointer, 1)
-			}
-
-			let blockNumberPointer
-			let blockNumberLength
-			{
-				let transactionRootPrefixPointer := add(stateRootPointer, 32)
-				let transactionRootPointer := add(transactionRootPrefixPointer, 1)
-				let receiptsRootPrefixPointer := add(transactionRootPointer, 32)
-				let receiptsRootPointer := add(receiptsRootPrefixPointer, 1)
-				let logsBloomPrefixPointer := add(receiptsRootPointer, 32)
-				let logsBloomPointer := add(logsBloomPrefixPointer, 3)
-				let difficultyPrefixPointer := add(logsBloomPointer, 256)
-				let difficultyPointer, difficultyLength := readDynamic(difficultyPrefixPointer)
-				let blockNumberPrefixPointer := add(difficultyPointer, difficultyLength)
-				blockNumberPointer, blockNumberLength := readDynamic(blockNumberPrefixPointer)
-			}
-
-
-			let timestampPointer
-			let timestampLength
-			{
-				let gasLimitPrefixPointer := add(blockNumberPointer, blockNumberLength)
-				let gasLimitPointer, gasLimitLength := readDynamic(gasLimitPrefixPointer)
-				let gasUsedPrefixPointer := add(gasLimitPointer, gasLimitLength)
-				let gasUsedPointer, gasUsedLength := readDynamic(gasUsedPrefixPointer)
-				let timestampPrefixPointer := add(gasUsedPointer, gasUsedLength)
-				timestampPointer, timestampLength := readDynamic(timestampPrefixPointer)
-			}
 
 			blockNumber := shr(sub(256, mul(blockNumberLength, 8)), mload(blockNumberPointer))
 			let blockHash := blockhash(blockNumber)

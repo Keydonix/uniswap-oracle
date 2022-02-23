@@ -12,7 +12,7 @@ library MerklePatriciaVerifier {
 	 *
 	 * WARNING: Does not currently support validation of unset/0 values!
 	 */
-	function getValueFromProof(bytes32 expectedRoot, bytes32 path, bytes memory proofNodesRlp) internal pure returns (bytes memory) {
+	function getValueFromProof(bytes32 expectedRoot, bytes32 path, bytes memory proofNodesRlp) internal pure returns (bytes memory result) {
 		Rlp.Item memory rlpParentNodes = Rlp.toItem(proofNodesRlp);
 		Rlp.Item[] memory parentNodes = Rlp.toList(rlpParentNodes);
 
