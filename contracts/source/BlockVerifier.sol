@@ -56,7 +56,6 @@ library BlockVerifier {
 			let timestampPrefixPointer := add(gasUsedPointer, gasUsedLength)
 			let timestampPointer, timestampLength := readDynamic(timestampPrefixPointer)
 
-
 			blockNumber := shr(sub(256, mul(blockNumberLength, 8)), mload(blockNumberPointer))
 			let blockHash := blockhash(blockNumber)
 			let rlpHash := keccak256(rlpBytes, rlpLength)
