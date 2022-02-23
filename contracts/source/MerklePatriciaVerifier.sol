@@ -1,4 +1,4 @@
-pragma solidity 0.6.8;
+pragma solidity >=0.8.0;
 
 import { Rlp } from "./Rlp.sol";
 
@@ -74,7 +74,7 @@ library MerklePatriciaVerifier {
 		// pathPtr counts nibbles in path
 		// partialPath.length is a number of nibbles
 		for(uint i=pathPtr; i<pathPtr+partialPath.length; i++) {
-			byte pathNibble = path[i];
+			bytes1 pathNibble = path[i];
 			slicedPath[i-pathPtr] = pathNibble;
 		}
 
@@ -95,7 +95,7 @@ library MerklePatriciaVerifier {
 		uint8 hpNibble = uint8(_getNthNibbleOfBytes(0,byteArray));
 		if(hpNibble == 1 || hpNibble == 3) {
 			nibbleArray = new bytes(byteArray.length*2-1);
-			byte oddNibble = _getNthNibbleOfBytes(1,byteArray);
+			bytes1 oddNibble = _getNthNibbleOfBytes(1,byteArray);
 			nibbleArray[0] = oddNibble;
 			offset = 1;
 		} else {
@@ -109,7 +109,7 @@ library MerklePatriciaVerifier {
 		return nibbleArray;
 	}
 
-	function _getNthNibbleOfBytes(uint n, bytes memory str) private pure returns (byte) {
-		return byte(n%2==0 ? uint8(str[n/2])/0x10 : uint8(str[n/2])%0x10);
+	function _getNthNibbleOfBytes(uint n, bytes memory str) private pure returns (bytes1) {
+		return bytes1(n%2==0 ? uint8(str[n/2])/0x10 : uint8(str[n/2])%0x10);
 	}
 }
