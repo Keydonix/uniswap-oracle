@@ -1,4 +1,4 @@
-pragma solidity >=0.8.0;
+pragma solidity 0.8.11;
 
 library BlockVerifier {
 	function extractStateRootAndTimestamp(bytes memory rlpBytes) internal view returns (bytes32 stateRoot, uint256 blockTimestamp, uint256 blockNumber) {

@@ -1,4 +1,4 @@
-pragma solidity >=0.8.0;
+pragma solidity 0.8.11;
 
 import { UniswapOracle } from  "@keydonix/UniswapOracle.sol";
 import { IUniswapV2Pair } from "@keydonix/IUniswapV2Pair.sol";

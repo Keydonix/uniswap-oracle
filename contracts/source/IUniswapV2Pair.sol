@@ -1,4 +1,4 @@
-pragma solidity >=0.8.0;
+pragma solidity 0.8.11;
 
 interface IUniswapV2Pair {
     function token0() external view returns (address);

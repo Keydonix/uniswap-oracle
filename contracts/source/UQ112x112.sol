@@ -1,4 +1,4 @@
-pragma solidity >=0.8.0;
+pragma solidity 0.8.11;
 
 // https://raw.githubusercontent.com/Uniswap/uniswap-v2-core/master/contracts/libraries/UQ112x112.sol
 // a library for handling binary fixed point numbers (https://en.wikipedia.org/wiki/Q_(number_format))

@@ -1,4 +1,4 @@
-pragma solidity >=0.8.0;
+pragma solidity 0.8.11;
 
 library Rlp {
 	uint constant DATA_SHORT_START = 0x80;
