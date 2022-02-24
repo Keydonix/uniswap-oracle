@@ -17,7 +17,7 @@ import { resetUniswapAndAccount, mineBlocks, swap0For1, swap1For0, setPrice } fr
 import { PriceEmitter } from './generated/price-emitter'
 
 const jsonRpcEndpoint = 'http://localhost:1237'
-const gasPrice = 10n*9n
+const gasPrice = 10n * 10n*9n
 
 let rpc: SignerFetchRpc
 let rpcSignerAddress: bigint

@@ -1,7 +1,7 @@
 {
 	"dependencies": {
 		"@keydonix/uniswap-oracle-sdk": "file:../sdk",
-		"@zoltu/solidity-typescript-generator-fetch-dependencies": "5.0.2"
+		"@zoltu/solidity-typescript-generator-fetch-dependencies": "6.1.3"
 	},
 	"devDependencies": {
 		"@keydonix/uniswap-oracle-contracts": "file:../contracts",
@@ -10,7 +10,7 @@
 		"@types/node": "14.0.5",
 		"@types/node-fetch": "2.5.7",
 		"@zoltu/rlp-encoder": "2.0.0",
-		"@zoltu/solidity-typescript-generator": "4.0.3",
+		"@zoltu/solidity-typescript-generator": "6.1.3",
 		"jasmine": "3.5.0",
 		"node-fetch": "2.6.1",
 		"solc": "0.6.8",

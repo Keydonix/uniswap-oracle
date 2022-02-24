@@ -1,9 +1,9 @@
 pragma solidity 0.6.8;
 pragma experimental ABIEncoderV2;
 
-import { BlockVerifier } from "@Keydonix/BlockVerifier.sol";
-import { MerklePatriciaVerifier } from "@Keydonix/MerklePatriciaVerifier.sol";
-import { Rlp } from "@Keydonix/Rlp.sol";
+import { BlockVerifier } from "@keydonix/BlockVerifier.sol";
+import { MerklePatriciaVerifier } from "@keydonix/MerklePatriciaVerifier.sol";
+import { Rlp } from "@keydonix/Rlp.sol";
 
 contract BlockVerifierWrapper {
 	function extractStateRootAndTimestamp(bytes memory input) public view returns (bytes32 stateRoot, uint256 blockTimestamp, uint256 blockNumber) {

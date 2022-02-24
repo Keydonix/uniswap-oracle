@@ -27,6 +27,7 @@ export function getBlockByNumberFactory(provider: Provider): OracleSdk.EthGetBlo
 		assertProperty(block, 'extraData', 'string')
 		assertProperty(block, 'mixHash', 'string')
 		assertProperty(block, 'nonce', 'string')
+		assertProperty(block, 'basefeePerGas', 'string')
 		return {
 			parentHash: stringToBigint(block.parentHash),
 			sha3Uncles: stringToBigint(block.sha3Uncles),
@@ -43,6 +44,7 @@ export function getBlockByNumberFactory(provider: Provider): OracleSdk.EthGetBlo
 			extraData: stringToByteArray(block.extraData),
 			mixHash: stringToBigint(block.mixHash),
 			nonce: stringToBigint(block.nonce),
+			baseFeePerGas: stringToBigint(block.basefeePerGas),
 		}
 	}
 }

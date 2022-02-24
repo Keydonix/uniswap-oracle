@@ -8,7 +8,7 @@ import { ethGetBlockByNumber } from './adapters';
 import { resetUniswapAndAccount, setPrice } from './uniswap-helpers';
 
 async function main() {
-	const gasPrice = 10n**9n
+	const gasPrice = 10n * 10n**9n
 	const rpc = await createMnemonicRpc('http://localhost:1237', gasPrice)
 	const rpcSignerAddress = await rpc.addressProvider()
 

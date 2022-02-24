@@ -29,7 +29,7 @@ services:
 
   nethermind:
     # TODO: update to image that contains Uniswap v2
-    image: 'keydonix/nethermind-spaceneth'
+    image: 'ghcr.io/keydonix/nethermind-spaceneth@sha256:b3743bb45758ddcf3f0a98607783607e0f3e2a1c2d2f466fdd7921f0a5b2df77' # 1.12.3-2?
     environment:
       FAKETIME_TIMESTAMP_FILE: '/faketime/faketime'
       FAKETIME_NO_CACHE: '1'

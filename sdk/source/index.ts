@@ -33,6 +33,7 @@ export type Block = {
 	readonly extraData: Uint8Array
 	readonly mixHash: bigint | undefined
 	readonly nonce: bigint | null
+	readonly baseFeePerGas: bigint
 }
 
 export type EthGetStorageAt = (address: bigint, position: bigint, block: bigint | 'latest') => Promise<bigint>
@@ -112,5 +113,6 @@ function rlpEncodeBlock(block: Block) {
 		stripLeadingZeros(block.extraData),
 		...(block.mixHash !== undefined ? [unsignedIntegerToUint8Array(block.mixHash, 32)] : []),
 		...(block.nonce !== null && block.nonce !== undefined ? [unsignedIntegerToUint8Array(block.nonce, 8)] : []),
+		stripLeadingZeros(unsignedIntegerToUint8Array(block.baseFeePerGas)),
 	])
 }
