@@ -6,4 +6,4 @@ generated/
 !**/output-cjs/package.json
 uniswap-oracle.iml
 artifacts/
-cache
+cache/
