@@ -1,3 +1,8 @@
+# DEPRECATED
+With Uniswap moving to v3 which contains built-in price history, this project is no longer necessary for most users.  On top of that, there have been a couple open issues on this repository for a while that are important to get addressed but will require a significant amount of work.  One is required to make the SDK work with London (EIP-1559), and the other is updating the contracts to work with newer versions of Solidity.  Given that I am unlikeley to put in the time to actually address either of these issues, I'm marking this repository as deprecated.
+
+Please note, the code is CC0 licenced, which means you can do whatever you want with it without permission.  I encourage anyone who is interested in taking over maintenance to fork this repository and do so.  If you show a willingness to maintain it (like fixing the two afformentioned issues) I would be happy to link to your fork in this readme.
+
 # uniswap-oracle
 A general purpose price feed oracle built on Uniswap v2 that supports arbitrary time windows (up to 256 blocks) and doesn't require any active maintenance.
 
