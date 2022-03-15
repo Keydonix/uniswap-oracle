@@ -1,5 +1,5 @@
-pragma solidity 0.6.8;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.11;
 
 import { BlockVerifier } from "./BlockVerifier.sol";
 import { MerklePatriciaVerifier } from "./MerklePatriciaVerifier.sol";

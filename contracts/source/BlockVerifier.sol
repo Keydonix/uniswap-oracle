@@ -1,4 +1,5 @@
-pragma solidity 0.6.8;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.11;
 
 library BlockVerifier {
 	function extractStateRootAndTimestamp(bytes memory rlpBytes) internal view returns (bytes32 stateRoot, uint256 blockTimestamp, uint256 blockNumber) {

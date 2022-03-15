@@ -1,4 +1,5 @@
-pragma solidity 0.6.8;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.11;
 
 interface IUniswapV2Pair {
     function token0() external view returns (address);
@@ -7,5 +8,5 @@ interface IUniswapV2Pair {
     function price0CumulativeLast() external view returns (uint256);
     function price1CumulativeLast() external view returns (uint256);
 
-	function getReserves() external view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast);
+    function getReserves() external view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast);
 }

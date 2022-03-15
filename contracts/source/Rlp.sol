@@ -1,4 +1,5 @@
-pragma solidity 0.6.8;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.11;
 
 library Rlp {
 	uint constant DATA_SHORT_START = 0x80;
@@ -246,15 +247,15 @@ library Rlp {
 	/// Item is a list.
 	/// @param self The Item.
 	/// @return The decoded string.
-	function toByte(Item memory self) internal pure returns (byte) {
+	function toByte(Item memory self) internal pure returns (bytes1) {
 		require(isData(self), "Rlp.sol:Rlp:toByte:1");
 		(uint256 rStartPos, uint256 len) = _decode(self);
 		require(len == 1, "Rlp.sol:Rlp:toByte:3");
-		byte temp;
+		bytes1 temp;
 		assembly {
 			temp := byte(0, mload(rStartPos))
 		}
-		return byte(temp);
+		return bytes1(temp);
 	}
 
 	/// @dev Decode an Item into an int. This will not work if the

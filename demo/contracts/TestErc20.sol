@@ -1,4 +1,4 @@
-pragma solidity 0.6.8;
+pragma solidity 0.8.11;
 
 contract TestErc20 {
 	event Transfer(address indexed from, address indexed to, uint256 value);
@@ -9,12 +9,12 @@ contract TestErc20 {
 	string public symbol;
 	string public name;
 
-	constructor(string memory _symbol, string memory _name) public {
+	constructor(string memory _symbol, string memory _name) {
 		symbol = _symbol;
 		name = _name;
 	}
 	function kill() public {
-		selfdestruct(msg.sender);
+		selfdestruct(payable(msg.sender));
 	}
 	function mint(uint256 amount) public {
 		totalSupply += amount;
@@ -37,7 +37,7 @@ contract TestErc20 {
 	function transferFrom(address sender, address recipient, uint256 amount) public returns (bool) {
 		uint256 startingAllowance = allowance[msg.sender][sender];
 		require(startingAllowance >= amount);
-		if (startingAllowance < uint256(-1)) {
+		if (startingAllowance < type(uint256).max) {
 			allowance[msg.sender][sender] = startingAllowance - amount;
 		}
 		_transfer(sender, recipient, amount);
