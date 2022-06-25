@@ -12,7 +12,7 @@
 		"@zoltu/rlp-encoder": "2.0.0",
 		"@zoltu/solidity-typescript-generator": "4.0.3",
 		"jasmine": "3.5.0",
-		"node-fetch": "2.6.1",
+		"node-fetch": "2.6.7",
 		"solc": "0.6.8",
 		"ts-node": "8.10.1",
 		"typescript": "3.9.3"
